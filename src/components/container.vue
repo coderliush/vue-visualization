@@ -9,8 +9,9 @@
         <span>【退出】</span>
       </div>
     </div>
-    <div class="time-photo">
+    <div class="panel time-photo">
       <div class="dot"></div>
+      <label>时间快照</label>
       <time-photo></time-photo>
     </div>
   </div>
@@ -31,8 +32,10 @@ export default {
 
 <style scoped lang="stylus">
   @import '~common/style/variable'
+    @import '~common/style/mixin'
   .wrapper
     flex 1
+    padding 0 10px
     .header
       color $color-white
       .info
@@ -50,4 +53,14 @@ export default {
         p
           position relative
           top 12px
+    .panel
+      background $bg-panel
+    .time-photo
+      display flex
+      align-items center
+      label 
+        margin-left 8px
+      .dot
+        width 20px
+        dot($color-active)
 </style>

@@ -22,10 +22,10 @@ export default {
   methods: {
     setRap(){
       var layout = this.$refs.layout;
-      var rap = document.body.clientWidth / 1366 || 1
+      var rap = document.body.clientWidth / 1903 || 1
       layout.style.transformOrigin = '0 0'
       layout.style.transform =  `scale(${rap}) translateZ(0)`
-      layout.style.width = '1354px'
+      layout.style.width = '1903px'
     },
   },
   components: {
@@ -38,4 +38,5 @@ export default {
 <style scoped lang="stylus">
   .layout
     display flex
+    padding 0 10px
 </style>

@@ -4,11 +4,11 @@
       <span class="dot"></span>
       <div class="time">
         <div class="block">
-          <span class="demonstration">设置默认时间</span>
+          <!-- <span class="demonstration">设置默认时间</span> -->
           <el-date-picker
             v-model="value3"
             type="datetime"
-            placeholder="选择日期时间"
+            placeholder="检索时间（默认当下）"
             default-time="12:00:00"
           >
           </el-date-picker>
