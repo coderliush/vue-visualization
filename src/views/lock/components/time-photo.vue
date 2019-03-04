@@ -4,11 +4,12 @@
       <span class="dot"></span>
       <span>时间快照</span>
       <el-date-picker
-        v-model="value3"
+        class="picker"
+        v-model="value"
         type="datetime"
         placeholder="检索时间（默认当下）"
         default-time="12:00:00"
-        class="picker"
+        @change="change"
       >
       </el-date-picker>
       <span>本部设备异常汇总：未安装</span>
@@ -30,6 +31,7 @@
     </div>
     <div class="axis">
       <img src="../../../assets/axis.png" alt="">
+      <div class="tag" ref="tag"><span></span></div>
     </div>
   </div>
 </template>
@@ -39,7 +41,16 @@ export default {
   name: "",
   data() {
     return {
-      value3: ''
+      value: '',
+      hours: '',
+    }
+  },
+  methods: {
+    change(e) {
+      const originX = 75
+      let X = originX + e.getHours() * 53
+      console.log('e.getHours()', X)
+      this.$refs.tag.style.left = `${X}px`
     }
   },
   components: {}
@@ -68,6 +79,20 @@ export default {
         dot($red)
         border-radius 50%
     .axis
+      position relative
+      display flex
       img 
         width 86%
+      .tag
+        position absolute
+        top 18px
+        left 75px
+        display block
+        width 10px 
+        height 10px
+        border 1px dashed $yellow
+        transition all 1s
+        span
+          display block
+          dot($yellow)
 </style>
