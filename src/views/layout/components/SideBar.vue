@@ -1,8 +1,8 @@
 <template>
-  <div class="wrapper">
+  <div class="side-bar">
     <div class="header">
-      <img class="left" src="../common/img/logo.png" alt="">
-      <img class="right" src="../common/img/menu.png" alt="">
+      <img class="left" src="../../../assets/logo.png" alt="">
+      <img class="right" src="../../../assets/menu.png" alt="">
     </div>
     <div class="body">
       <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
@@ -67,15 +67,15 @@
     },
     methods: {
       handleNodeClick(data) {
-        console.log(data);
+        
       }
     },
   };
 </script>
 
 <style scoped lang="stylus">
-  @import '~common/style/variable.styl'
-  .wrapper
+  @import '~styles/variable.styl'
+  .side-bar
     width 200px
     height 100%
     margin-top 4px
@@ -90,14 +90,12 @@
       display flex
       align-items center
       justify-content space-between
-      background url('../common/img/logobj.png') no-repeat
+      background url('../../../assets/logobj.png') no-repeat
+      background-size 100% 100%
     .body
       height 100%
       padding 4px
       flex 1
       background #1B405B
-
-
-
 </style>
 

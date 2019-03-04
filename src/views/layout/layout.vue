@@ -1,13 +1,17 @@
 <template>
   <div class="layout" ref="layout">
-    <side></side>
-    <container></container>
+    <side-bar></side-bar>
+    <div class="right">
+      <nav-bar></nav-bar>
+      <views></views>
+    </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import Side from 'components/side'
-import Container from 'components/container'
+import SideBar from './components/SideBar'
+import NavBar from './components/NavBar'
+import Views from '../lock/index'
 export default {
   name: '',
   data() {
@@ -29,8 +33,9 @@ export default {
     },
   },
   components: {
-    Side,
-    Container
+    SideBar,
+    NavBar,
+    Views
   }
 }
 </script>
@@ -39,4 +44,7 @@ export default {
   .layout
     display flex
     padding 0 10px
+    .right
+      flex 1
+      margin-left 10px
 </style>

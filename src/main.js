@@ -5,7 +5,7 @@ import store from './store'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import 'common/style/index.styl'
+import 'styles/index.styl'
 
 Vue.use(ElementUI)
 

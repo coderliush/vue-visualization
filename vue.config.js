@@ -8,7 +8,7 @@ module.exports = {
   chainWebpack: config => {
     config.resolve.alias
       .set('views', resolve('src/views'))
-      .set('common', resolve('src/common'))
+      .set('styles', resolve('src/styles'))
       .set('components', resolve('src/components'))
   },
 

@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-const Index = (resolve) => {
-  import('views/index').then((module) => {
+const Layout = (resolve) => {
+  import('views/layout/layout').then((module) => {
     resolve(module)
   })
 }
@@ -13,8 +13,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'index',
-      component: Index
+      name: 'layout',
+      component: Layout
     },
   ]
 })
