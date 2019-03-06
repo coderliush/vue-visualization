@@ -49,7 +49,6 @@ export default {
     change(e) {
       const originX = 75
       let X = originX + e.getHours() * 53
-      console.log('e.getHours()', X)
       this.$refs.tag.style.left = `${X}px`
     }
   },

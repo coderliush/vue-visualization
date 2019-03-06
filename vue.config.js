@@ -8,15 +8,16 @@ module.exports = {
   chainWebpack: config => {
     config.resolve.alias
       .set('views', resolve('src/views'))
+      .set('utils', resolve('src/utils'))
       .set('styles', resolve('src/styles'))
       .set('components', resolve('src/components'))
   },
 
   devServer: {
-    // proxy: {
-    //   '/api': {
-    //     // target: 'http://172.16.0.148:20003'         // 测试
-    //   }
-    // }
+    proxy: {
+      '/api': {
+        target: 'http://172.16.0.148:20002' 
+      }
+    }
   }
 }

@@ -76,7 +76,7 @@
 <style scoped lang="stylus">
   @import '~styles/variable.styl'
   .side-bar
-    width 200px
+    width 267px
     height 100%
     margin-top 4px
     display flex
