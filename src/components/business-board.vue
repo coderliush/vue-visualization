@@ -14,8 +14,8 @@ export default {
   props: {
     content: {
       type: Object,
-      default: {
-        return: {}
+      default() {
+        return {}
       }
     }
   },
@@ -27,4 +27,22 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+  @import '~styles/variable'
+  img 
+    width 100%
+  .content
+    position relative
+    .active
+      position absolute
+      top -108px
+      left 50%
+      transform translateX(-50%)
+      color $color-active
+      font-size 24px
+    .name 
+      position absolute
+      top -74px
+      left 50%
+      transform translateX(-50%)
+      font-size $font-small
 </style>

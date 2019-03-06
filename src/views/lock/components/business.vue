@@ -1,9 +1,18 @@
 <template>
   <div class="business" ref="business">
-    <div class="board-wrapper">
-      <board></board>
+    <div class="title">
+      <span class="dot"></span>
+      <span>运营异常检索（异常占比）</span>
+      <span class="active">2018-12-13</span>
+      <span>设备总计</span>
+      <span class="active">XXX</span>
     </div>
-    <b-map class="map" ref="map" @nodechange="nodechange" />
+
+    <div class="map-wrapper">
+      <div class="left"><board v-for="(item, index) in boardLeft" :key="index" :content="item" class="board"></board></div>
+      <b-map class="map" ref="map" @nodechange="nodechange" />
+      <div class="right"><board v-for="(item, index) in boardRight" :key="index" :content="item" class="board"></board></div>
+    </div>
   </div>
 </template>
 
@@ -15,6 +24,34 @@ export default {
   name: 'app',
   data() {
     return {
+      boardLeft: {
+        provice: {
+          num: '10',
+          name: '省公司'
+        },
+        city: {
+          num: '10',
+          name: '城市公司'
+        },
+        company: {
+          num: '10',
+          name: '分公司'
+        },
+      },
+      boardRight: {
+        servicesCenter: {
+          num: '10',
+          name: '服务中心'
+        },
+        village: {
+          num: '10',
+          name: '小区'
+        },
+        unit: {
+          num: '10',
+          name: '单元'
+        },
+      },
       update: false
     }
   },
@@ -83,7 +120,30 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-
+  @import '~styles/mixin'
+  @import '~styles/variable'
+  .business
+    margin-top 10px
+    background $bg-panel
+    .title
+      display flex
+      align-items center
+      padding 20px 10px
+      .dot
+        margin-right 10px
+        dot($color-active)
+      .active 
+        margin 0 20px 0 10px
+        color $color-active
+    .map-wrapper
+      display flex
+      .left, .right
+        float left
+        padding 60px 100px 0 100px 
+        .board
+          height 33.33%
+      .map
+        flex 1
 </style>
 
 

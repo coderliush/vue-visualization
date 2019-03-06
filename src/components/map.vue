@@ -70,7 +70,7 @@
           <div class="item" v-for="(item, index) in mapArr" :key="index">
             <img :src="item.url" alt>
             <div v-if="item.nums" style="position: relative;">
-              <p style="z-index: 999; height: 20px; background: #050A27;padding-right: 14px;">{{item.name}}</p>
+              <p style="z-index: 999; height: 20px; background: #103045; padding-right: 14px;">{{item.name}}</p>
               <div>
                 <transition-group name="slide">
                   <p v-for="num in item.nums" :key="num" class="number-active">{{num|splitNum}}</p>
@@ -1118,7 +1118,7 @@ export default {
             position: relative;
             background: url('../assets/mapBg.png') no-repeat; 
             background-size: 100% 82%;
-            top: -861px;
+            top: -885px;
         }
       .community {
         display: flex;
@@ -1174,7 +1174,7 @@ export default {
     bottom: 0;
     width: 100%;
     height: 14px;
-    background: #050A27;
+    background: $bg-panel;
   }
 }
 </style>

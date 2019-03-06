@@ -4,3 +4,6 @@ Vue.directive('split-num', {
     return el.innerHTML = el.innerHTML.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,')
   }
 })
+
+
+
