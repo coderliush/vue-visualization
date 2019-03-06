@@ -1075,7 +1075,6 @@ export default {
     flex: 1;
     height: 742px;
     .select-wrapper {
-      margin: 6px 0;
       .el-select {
         width: 137px;
         margin: 0 4px;
@@ -1118,7 +1117,7 @@ export default {
             position: relative;
             background: url('../assets/mapBg.png') no-repeat; 
             background-size: 100% 82%;
-            top: -885px;
+            top: -861px;
         }
       .community {
         display: flex;

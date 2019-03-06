@@ -123,12 +123,15 @@ export default {
   @import '~styles/mixin'
   @import '~styles/variable'
   .business
+    position relative
+    z-index 1
     margin-top 10px
     background $bg-panel
     .title
       display flex
       align-items center
       padding 20px 10px
+      
       .dot
         margin-right 10px
         dot($color-active)
