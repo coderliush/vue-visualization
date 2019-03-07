@@ -8,6 +8,8 @@
       <span class="active">XXX</span>
     </div>
 
+    <cirque></cirque>
+
     <div class="map-wrapper">
       <div class="left"><board v-for="(item, index) in boardLeft" :key="index" :content="item" class="board"></board></div>
       <b-map class="map" ref="map" @nodechange="nodechange" />
@@ -17,6 +19,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+import Cirque from 'components/cirque'
 import Board from 'components/business-board'
 import BMap from 'components/map'
 import {computedPercent} from 'utils/computedPercent'
@@ -113,6 +116,7 @@ export default {
     }
   },
   components: {
+    Cirque,
     Board,
     BMap,
   }

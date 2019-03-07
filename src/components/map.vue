@@ -1075,6 +1075,7 @@ export default {
     flex: 1;
     height: 742px;
     .select-wrapper {
+      margin: 6px 0;
       .el-select {
         width: 137px;
         margin: 0 4px;
