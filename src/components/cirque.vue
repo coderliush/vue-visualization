@@ -1,5 +1,5 @@
 <template>
-  <div id="cirque" style="width: 300px;height: 300px;"></div>
+  <div id="cirque" style="width: 400px;height: 400px;"></div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -13,8 +13,8 @@ export default {
   },
   methods: {
     init() {
-      const echarts = require("echarts");
-      const chart = echarts.init(document.getElementById("cirque"));
+      const echarts = require("echarts")
+      const chart = echarts.init(document.getElementById("cirque"))
 
       const option = {
         title: {
