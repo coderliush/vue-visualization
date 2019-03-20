@@ -1,8 +1,8 @@
 <template>
   <div class="layout" ref="layout">
-    <side-bar></side-bar>
-    <div class="right">
-      <nav-bar></nav-bar>
+    <nav-bar></nav-bar>
+    <div class="main">
+      <side-bar></side-bar>
       <views></views>
     </div>
   </div>
@@ -42,9 +42,5 @@ export default {
 
 <style scoped lang="stylus">
   .layout
-    display flex
     padding 0 10px
-    .right
-      flex 1
-      margin-left 10px
 </style>

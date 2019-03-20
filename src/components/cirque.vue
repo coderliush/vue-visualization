@@ -1,5 +1,5 @@
 <template>
-  <div id="cirque" style="width: 400px;height: 400px;"></div>
+  <div ref="cirque" class="cirque"></div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -14,7 +14,7 @@ export default {
   methods: {
     init() {
       const echarts = require("echarts")
-      const chart = echarts.init(document.getElementById("cirque"))
+      const chart = echarts.init(this.$refs.cirque)
 
       const option = {
         title: {
@@ -56,8 +56,7 @@ export default {
               position: "inside",
               formatter: '{d}'
             },
-            radius: [122, 180],
-
+            radius: ['40%', '67%'],
             animation: false
           }
         ],
@@ -70,5 +69,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-
+  .cirque
+    width 300px
+    height 300px
 </style>

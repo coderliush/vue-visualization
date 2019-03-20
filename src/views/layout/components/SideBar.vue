@@ -1,10 +1,6 @@
 <template>
   <div class="side-bar">
-    <div class="header">
-      <img class="left" src="../../../assets/logo.png" alt="">
-      <img class="right" src="../../../assets/menu.png" alt="">
-    </div>
-    <div class="body">
+    <div class="tree" ref="tree">
       <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
     </div>
   </div>
@@ -68,6 +64,9 @@
     methods: {
       handleNodeClick(data) {
         
+      },
+      close() {
+        this.$refs.tree.classList.add('close')
       }
     },
   };
@@ -75,6 +74,9 @@
 
 <style scoped lang="stylus">
   @import '~styles/variable.styl'
+  .close
+    width 0
+    transform translate all 1s
   .side-bar
     width 267px
     height 100%
@@ -82,17 +84,7 @@
     display flex
     flex-direction column
     font-size $font-small
-    .header
-      width 100%
-      height 50px
-      margin-bottom 10px
-      padding 0 20px
-      display flex
-      align-items center
-      justify-content space-between
-      background url('../../../assets/logobj.png') no-repeat
-      background-size 100% 100%
-    .body
+    .tree
       height 100%
       padding 4px
       flex 1

@@ -8,15 +8,8 @@
       <span class="active">XXX</span>
     </div>
 
-    <cirque></cirque>
-
     <div class="map-wrapper">
-      <div class="left">
-        <div v-for="(item, index) in left" :key="index" :content="item" class="board">
-          <div class="item">
-            <div class="right"><board v-for="(item, index) in boardRight" :key="index" :content="item" class="board"></board></div>
-          </div>
-        </div>
+      <div class="right"><board v-for="(item, index) in boardRight" :key="index" :content="item" class="board"></board></div>
       <b-map class="map" ref="map" @nodechange="nodechange" />
       <div class="right"><board v-for="(item, index) in boardRight" :key="index" :content="item" class="board"></board></div>
     </div>

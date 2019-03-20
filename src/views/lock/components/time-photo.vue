@@ -60,7 +60,7 @@ export default {
   @import '~styles/mixin'
   @import '~styles/variable'
   .time-photo
-    margin-top 11px
+    margin-top 4px
     padding 10px
     background $bg-panel
     .row
