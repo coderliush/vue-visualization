@@ -11,7 +11,12 @@
     <cirque></cirque>
 
     <div class="map-wrapper">
-      <div class="left"><board v-for="(item, index) in boardLeft" :key="index" :content="item" class="board"></board></div>
+      <div class="left">
+        <div v-for="(item, index) in left" :key="index" :content="item" class="board">
+          <div class="item">
+            <div class="right"><board v-for="(item, index) in boardRight" :key="index" :content="item" class="board"></board></div>
+          </div>
+        </div>
       <b-map class="map" ref="map" @nodechange="nodechange" />
       <div class="right"><board v-for="(item, index) in boardRight" :key="index" :content="item" class="board"></board></div>
     </div>
@@ -27,7 +32,8 @@ export default {
   name: 'app',
   data() {
     return {
-      boardLeft: {
+      componentName: 'Cirque',
+      left: {
         provice: {
           num: '10',
           name: '省公司'

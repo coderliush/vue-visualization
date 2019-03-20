@@ -4,7 +4,7 @@
 
 <script type="text/ecmascript-6">
 export default {
-  name: "",
+  name: "cirque",
   data() {
     return {};
   },
@@ -23,30 +23,38 @@ export default {
         series: [
           {
             type: "pie",
-            data: [
-              {
-                name: "北京",
-                value: 20
+            color: ['#7ABC12', '#1DA8FB', '#E7654B', '#979994', '#A26337', '#FDAE0B', '#FF67BB'],
+            data: [{
+                name: "",
+                value: 14.28
               },
               {
-                name: "天津",
-                value: 20
+                name: "",
+                value: 14.28
               },
               {
-                name: "上海",
-                value: 20
+                name: "",
+                value: 14.28
               },
               {
-                name: "美国",
-                value: 20
+                name: "",
+                value: 14.28
               },
               {
-                name: "法国",
-                value: 20
-              }
-            ],
+                name: "",
+                value: 14.28
+              },
+              {
+                name: "",
+                value: 14.28
+              },
+              {
+                name: "",
+                value: 14.28
+              }],
             label: {
-              position: "inside"
+              position: "inside",
+              formatter: '{d}'
             },
             radius: [122, 180],
 
