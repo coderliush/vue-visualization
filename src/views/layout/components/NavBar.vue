@@ -23,10 +23,10 @@ export default {
     return {}
   },
   methods: {
-    lock() {
-      this.$emit('close')
+    close() {
+      this.$bus.$emit('close')
     }
-  }
+  },
   components: {
     
   }

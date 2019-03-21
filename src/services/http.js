@@ -134,9 +134,11 @@ var http = {
     }
 }
 
+
 export default {
     http:http,
     install(Vue, options) {
-        Vue.prototype.$http = http;
+        Vue.prototype.$http = http
+        Vue.prototype.$bus = new Vue()
     }
 }

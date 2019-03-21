@@ -1,15 +1,18 @@
 <template>
-  <div class="side-bar">
-    <div class="tree" ref="tree">
-      <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+  <transition name="close">
+    <div class="side-bar" ref="wrapper" v-show="showSideBar">
+      <div class="tree">
+        <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
   export default {
     data() {
       return {
+        showSideBar: true,
         data: [{
           label: '1.0 锁生命周期管理',
           children: [{
@@ -61,25 +64,31 @@
         }
       };
     },
+    mounted() {
+      this.$bus.$on('close', ()=> {
+        this.showSideBar = !this.showSideBar
+      })
+    },
     methods: {
       handleNodeClick(data) {
         
       },
-      close() {
-        this.$refs.tree.classList.add('close')
-      }
     },
   };
 </script>
 
 <style scoped lang="stylus">
   @import '~styles/variable.styl'
-  .close
-    width 0
-    transform translate all 1s
+  .close-enter-active, .close-leave-active {
+    transition all 0.5s linear
+  }
+  .close-enter, .close-leave-to {
+    transform translateX(-300px)
+  }
+
+
   .side-bar
     width 267px
-    height 100%
     margin-top 4px
     display flex
     flex-direction column
