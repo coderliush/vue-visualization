@@ -4,6 +4,7 @@
     <business></business>
     <device></device>
     <life></life>
+    <table-page></table-page>
   </div>
 </template>
 
@@ -12,6 +13,7 @@ import TimePhoto from './components/time-photo.vue'
 import Business from './components/business.vue'
 import Device from './components/device.vue'
 import Life from './components/life.vue'
+import tablePage from './components/tablePage.vue'
 export default {
   name: '',
   data() {
@@ -27,7 +29,8 @@ export default {
     TimePhoto,
     Business,
     Device,
-    Life
+    Life,
+    tablePage
   }
 }
 </script>

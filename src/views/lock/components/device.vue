@@ -29,7 +29,7 @@ export default {
   name: '',
   data() {
     return {
-      componetName: 'board',
+      componetName: 'Cirque',
       value: '',
       arr: [{
         name: '设备类型',
@@ -82,9 +82,11 @@ export default {
         width 25%
         text-align center
         .select
-          width 110px
+          width 120px!important
         .graph
-          margin-top 10px
+          position relative
+          top -14px
+          left 30px
           .cirque
             width 100%
             height 300px

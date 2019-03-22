@@ -1,5 +1,11 @@
 <template>
-  <div ref="cirque" class="cirque"></div>
+  <div class="cirque-wrapper">
+    <div class="label">
+      <p>未注册1</p>
+      <canvas ref="register"></canvas>
+    </div>
+    <div ref="cirque" class="cirque"></div>
+  </div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -9,6 +15,7 @@ export default {
     return {};
   },
   mounted() {
+    this.initLabel()
     this.init();
   },
   methods: {
@@ -62,14 +69,35 @@ export default {
         ],
       }
       chart.setOption(option)
-    }
+    },
+    initLabel() {
+      let register = this.$refs.register.getContext("2d")
+      register.beginPath()
+      register.moveTo(40,40)
+      register.lineTo(100,40)
+      register.lineTo(120,100)
+      register.strokeStyle="#7CCCEF"
+      register.stroke()
+    },
   },
   components: {}
 };
 </script>
 
 <style scoped lang="stylus">
+  @import '~styles/variable'
+  .label
+    position relative
+    font-size $font-smaller
+    p
+      position absolute
+      top 18px
+      left 40px
+    canvas 
+      position absolute
+      left 0
   .cirque
     width 300px
     height 300px
+
 </style>
