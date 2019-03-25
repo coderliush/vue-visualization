@@ -11,7 +11,7 @@
     <div class="device-container">
       <div v-for="(item, index) in arr" :key="index" class="item">
           <el-select v-model="value" class="select">
-            <el-option :label="item.label" :value="item.value"></el-option>
+            <el-option :label="item.label" :value="item.value" onChange="onSelect"></el-option>
           </el-select>
 
           <div class="graph">
@@ -48,6 +48,11 @@ export default {
         src: require('../../../assets/batch.png'),
         options: {value: 1, label: '设备类型'}
       }]
+    }
+  },
+  methods: {
+    onSelect() {
+      console.log('1')
     }
   },
   components: {
