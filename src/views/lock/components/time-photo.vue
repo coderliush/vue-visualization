@@ -41,16 +41,30 @@ export default {
   name: "",
   data() {
     return {
+      hideSideBar: false,
       value: '',
       hours: '',
+      originX: 183,
+      gap: 50.5
     }
   },
   methods: {
     change(e) {
-      const originX = 75
-      let X = originX + e.getHours() * 53
+      let X
+      if (!this.hideSideBar) {
+        const hasSideX = 183, hasSideGap = 50.5
+        X = hasSideX + e.getHours() * hasSideGap
+      } else {
+        const noSideX = 250, noSideGap = 52
+        X = noSideX + e.getHours() * noSideGap
+      }
       this.$refs.tag.style.left = `${X}px`
     }
+  },
+  mounted() {
+    this.$bus.$on('close', ()=>{
+      this.hideSideBar = !this.hideSideBar
+    })
   },
   components: {}
 };
@@ -66,6 +80,7 @@ export default {
     .row
       display flex
       align-items center
+      margin-bottom 20px
       .dot
         margin-right 10px
         dot($color-active)
@@ -73,7 +88,7 @@ export default {
         margin 0 20px
       .active
         color $color-active
-        margin 0 30px 0 6px
+        margin 0 50px 0 6px
       .red-dot
         dot($red)
         border-radius 50%
@@ -82,10 +97,11 @@ export default {
       display flex
       img 
         width 86%
+        margin 0 auto
       .tag
         position absolute
         top 18px
-        left 75px
+        left 183px
         display block
         width 10px 
         height 10px
