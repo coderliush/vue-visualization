@@ -37,5 +37,7 @@ export default {
 
 <style scoped lang="stylus">
   .lock 
+    position relative 
+    z-index 9
     flex 1
 </style>

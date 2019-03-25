@@ -7,6 +7,9 @@
       <span>设备总计</span>
       <span class="active">XXX</span>
     </div>
+    <div class="content">
+      
+    </div>
   </div>
 </template>
 
