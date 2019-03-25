@@ -38,5 +38,4 @@ export default {
 <style scoped lang="stylus">
   .lock 
     flex 1
-    margin-left 10px
 </style>

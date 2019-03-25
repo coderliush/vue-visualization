@@ -1,11 +1,9 @@
 <template>
-  <transition name="close">
-    <div class="side-bar" ref="wrapper" v-show="showSideBar">
-      <div class="tree">
-        <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
-      </div>
+  <div class="side-bar" ref="wrapper">
+    <div class="tree" :class="showSideBar ? 'showSideBar' : null">
+      <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
     </div>
-  </transition>
+  </div>
 </template>
 
 <script>
@@ -79,24 +77,22 @@
 
 <style scoped lang="stylus">
   @import '~styles/variable.styl'
-  .close-enter-active, .close-leave-active {
-    transition all 0.5s linear
-  }
-  .close-enter, .close-leave-to {
-    transform translateX(-300px)
-  }
-
-
+  .showSideBar
+    width 0!important
+    overflow hidden
+    margin-right 0!important
+    
   .side-bar
-    width 267px
-    margin-top 4px
+    margin-top 4px 
     display flex
     flex-direction column
     font-size $font-small
     .tree
+      width 268px
+      margin-right 10px
       height 100%
-      padding 4px
       flex 1
       background #1B405B
+      transition all 0.3s linear
 </style>
 
