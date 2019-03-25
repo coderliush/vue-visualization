@@ -173,6 +173,7 @@ export default {
     // })]);
     // this.districtselescts.push(0);
     this.orgs = await getorg;
+    console.log('this', this.orgs)
     this.init();
    
     // document.getElementById("#map").omo = e =>{
