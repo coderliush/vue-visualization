@@ -1,6 +1,6 @@
 <template>
   <div class="table-page">
-    <div class="title">
+    <!-- <div class="title">
       <div class="left">
         <span class="dot"></span>
         <span>设备生命周期详细报表</span>
@@ -28,7 +28,7 @@
           </el-table-column>
         </el-table>
       </template>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -65,6 +65,7 @@ export default {
   @import '~styles/mixin'
   @import '~styles/variable'
   .table-page
+    width 100%
     position relative
     z-index 1
     margin-top 10px
@@ -84,4 +85,6 @@ export default {
         .dot
           margin-right 10px
           dot($color-active)
+    .container
+      width 100%
 </style>

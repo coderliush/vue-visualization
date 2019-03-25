@@ -1,6 +1,6 @@
 <template>
   <div class="side-bar" ref="wrapper">
-    <div class="tree" :class="showSideBar ? 'showSideBar' : null">
+    <div class="tree" :class="hideSideBar ? 'hideSideBar' : null">
       <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
     </div>
   </div>
@@ -10,7 +10,7 @@
   export default {
     data() {
       return {
-        showSideBar: true,
+        hideSideBar: false,
         data: [{
           label: '1.0 锁生命周期管理',
           children: [{
@@ -64,7 +64,7 @@
     },
     mounted() {
       this.$bus.$on('close', ()=> {
-        this.showSideBar = !this.showSideBar
+        this.hideSideBar = !this.hideSideBar
       })
     },
     methods: {
@@ -77,7 +77,7 @@
 
 <style scoped lang="stylus">
   @import '~styles/variable.styl'
-  .showSideBar
+  .hideSideBar
     width 0!important
     overflow hidden
     margin-right 0!important

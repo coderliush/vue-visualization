@@ -55,22 +55,26 @@
 
         </div>
         <div class="header-wrapper"> 
-          <p class="header">{{cityname}}</p>
+          <div class="header">
+            <p style="max-width: 370px; margin: 0 auto;">{{cityname}}</p>
+            <!-- <p :class="cityname.length < 24 ? 'normal-class' : null">{{cityname.length > 26 ? cityname.substring(0, 26) : cityname}}</p><br/>
+            <p>{{cityname.length > 26 ? cityname.substring(26) : null}}</p> -->
+          </div>
         </div>
         <div class="body" id="bodymap">
           <div id="map" v-show="!showtype"></div>
           <div id="mappic" v-show="!showtype"></div>
-          <villdge-unit :type="showtype" :vname="vname" :src="imgurl" v-show="showtype"></villdge-unit>
+          <villdgeUnit :type="showtype" :vname="vname" :src="imgurl" v-show="showtype"></villdgeUnit>
         </div>
         <div class="count">
-          <p><span>公寓总数：</span><span>{{cellcount|splitNum}}</span></p>
-          <p><span>设备总数：</span><span>{{deviceCount|splitNum}}</span></p>
+          <p><span>设备数：</span><span>{{deviceCount|splitNum}}</span></p>
+          <p><span>房间数 / 单元数：</span><span>{{roomcount|splitNum}} / {{cellcount|splitNum}}</span></p>
         </div>
         <div class="footer">
           <div class="item" v-for="(item, index) in mapArr" :key="index">
             <img :src="item.url" alt>
             <div v-if="item.nums" style="position: relative;">
-              <p style="z-index: 999; height: 20px; background: #103045; padding-right: 14px;">{{item.name}}</p>
+              <p style="z-index: 999; height: 20px;padding-right: 14px;">{{item.name}}</p>
               <div>
                 <transition-group name="slide">
                   <p v-for="num in item.nums" :key="num" class="number-active">{{num|splitNum}}</p>
@@ -150,7 +154,8 @@ export default {
       cellselect: null,
       celloptions: null,
       cellcount:null,//公寓总数
-      deviceCount:null,//设备总数
+      roomcount:null,//房间总数
+      deviceCount:null,//设备数
       vname:null,//小区名称
       vpics:null,//小区图片数组
       imgurl:null,//数组第一张
@@ -158,7 +163,6 @@ export default {
   },
   async mounted() {
     const getdistrict = this.$http.get('/dmp/api/Map/Query');
-    console.log('getdistrict', getdistrict)
     const getorg = this.$http.get('/dmp/api/Org/Query');
     this.districts = await getdistrict;
     // this.districtselesctoptions.push([{id:0,name:'全部'},...this.districts.filter(d=>{
@@ -227,6 +231,7 @@ export default {
       // this.mapArr[0].num = httpresult.openCount;
       // this.mapArr[1].num = httpresult.chargeCount;
       const datalist = httpresult.cell;
+      const rooms = httpresult.room;
       //const datalist2 = httpresult.device;
       if(isleaf) villages = await getvillage;
       for(var i =0;i<datalist.length;i++){
@@ -236,6 +241,7 @@ export default {
         //if(node2) node.deviceCount = node2.count;
         //else node.count = 0;
         node.cellCount = node.count;
+        node.roomCount = rooms[i].count;
         
         var find =null;
         if(isleaf){
@@ -262,6 +268,9 @@ export default {
       this.cellcount = showlist.reduce((p,c)=>{
         return p+c.cellCount;
       },0);
+      this.roomcount = showlist.reduce((p,c)=>{
+        return p+c.roomCount;
+      },0);
       // this.deviceCount = showlist.reduce((p,c)=>{
       //   return p+c.deviceCount;
       // },0);
@@ -277,6 +286,7 @@ export default {
       // this.mapArr[0].num = httpresult.openCount;
       // this.mapArr[1].num = httpresult.chargeCount;
       const datalist = httpresult.cell;
+      const rooms = httpresult.room;
       //const datalist2 = httpresult.device;
       if(isleaf) villages = await getvillage;
       for(var i =0;i<datalist.length;i++){
@@ -286,6 +296,7 @@ export default {
         // if(node2) node.deviceCount = node2.count;
         // else node.count = 0;
         node.cellCount = node.count;
+        node.roomCount = rooms[i].count;
 
         var find =null;
         if(isleaf){
@@ -303,6 +314,9 @@ export default {
       var showlist = datalist.filter(d=>d.cellCount);
       this.cellcount = showlist.reduce((p,c)=>{
         return p+c.cellCount;
+      },0);
+      this.roomcount = showlist.reduce((p,c)=>{
+        return p+c.roomCount;
       },0);
       // this.deviceCount = showlist.reduce((p,c)=>{
       //   return p+c.deviceCount;
@@ -415,24 +429,26 @@ export default {
           this.cityname = village.name;
           const httpresults = await this.$http.awaitTasks([
             this.$http.get(`/dmp/api/Cell/QueryCell/${id}`),
-            this.$http.get(`/dmp/api/GetImage/GetVillage?id=${id}`)//1938 ${id}
+            this.$http.get(`/dmp/api/GetImage/GetVillage?id=${id}`),//1938 ${id}
+            this.$http.post(`/dmp/api/Cell/RoomCount`,{id:id,type:3})
           ])
           const celloptions = httpresults[0];
           this.celloptions = [{id:0,address:'全部'}, ...celloptions];//单元选择赋值
           this.cellselect = 0;
           this.vpics = httpresults[1].pics;
           // 小区图片只取一张;
-          if(this.vpics){
+          if(this.vpics.length !== 0){
             this.imgurl = this.vpics.splice(0, 1)[0]
           } else{
             this.imgurl = defaultImg;
           }
-          if(httpresults[1].re)
+          // if(httpresults[1].re)
           // this.setTabNum(0,httpresults[1].openCount);
           // this.setTabNum(1,httpresults[1].chargeCount);
           // this.mapArr[0].num = httpresults[1].openCount;
           // this.mapArr[1].num = httpresults[1].chargeCount;
           this.cellcount = httpresults[1].cellCount;
+          this.roomcount = httpresults[2];
           // this.deviceCount = httpresults[1].deviceCount;
         }
     },
@@ -446,6 +462,7 @@ export default {
           var cell = this.celloptions.find(v=>v.id==id);
           this.cityname = cell.address;
           this.showtype=2;
+          var getroomcount = this.$http.post(`/dmp/api/Cell/RoomCount`,{id:id,type:4});
           const httpresult = await this.$http.get(`/dmp/api/GetImage/GetCuc?id=${id}`);//28147 ${id}
           this.imgurl = httpresult.pic || defaultImg;   // 父元素
           // this.setTabNum(0,httpresult.openCount);
@@ -453,6 +470,7 @@ export default {
           // this.mapArr[0].num = httpresult.openCount;
           // this.mapArr[1].num = httpresult.chargeCount;
           this.cellcount = httpresult.cellCount;
+          this.roomcount = await getroomcount;
           // this.deviceCount = httpresult.deviceCount;
           //this.celloptions = [{id:0,address:'全部'}, ...celloptions];//单元选择赋值
         }
@@ -767,13 +785,13 @@ export default {
               formatter:(params)=>{
                 // console.log(params);
                 var node = params.value[2];
-                if(node.deviceCount) return `<div class="tooltip-wrapper">${node.name}<br />公寓总数:${node.cellCount}<br />设备总数:${node.deviceCount}</div>`;
+                if(node.deviceCount) return `<div class="tooltip-wrapper">${node.name}<br />房间数:${node.roomCount}<br />单元数:${node.cellCount}<br />设备数:${node.deviceCount}</div>`;
                 queryDeviceCount(node.id).then(deciveCount=>{
                   node.deviceCount = deciveCount
-                  if(curshowid==node.id) mapdiv.firstElementChild.innerHTML=`<div class="tooltip-wrapper">${node.name}<br />公寓总数:${node.cellCount}<br />设备总数:${deciveCount}</div>`
+                  if(curshowid==node.id) mapdiv.firstElementChild.innerHTML=`<div class="tooltip-wrapper">${node.name}<br />房间数:${node.roomCount}<br />单元数:${node.cellCount}<br />设备数:${deciveCount}</div>`
                 });
-                // return `${node.name}<br />公寓总数:${node.cellCount}`;//<br />公寓总数:${node.cellCount}<br />设备总数:${node.deviceCount}
-                return `<div class="tooltip-wrapper">${node.name}<br />公寓总数:${node.cellCount}</div>`;
+                // return `${node.name}<br />公寓总数:${node.cellCount}`;//<br />公寓总数:${node.cellCount}<br />设备数:${node.deviceCount}
+                return `<div class="tooltip-wrapper">${node.name}<br />房间数:${node.roomCount}<br />单元数:${node.cellCount}</div>`;
               }
             },
             zlevel: 1
@@ -995,6 +1013,11 @@ export default {
 // .slide-enter-active
 //   animation enter 10s inlinear;
 
+.normal-class {
+  font-size: 16px;
+  position: relative;
+  top: 4px;
+}
 
 .number-active {
   position: absolute;
@@ -1029,39 +1052,39 @@ export default {
 
 .title {
   display: flex;
-  .tab1.active {
-    color: #fff;
-    background: url('../assets/tab1-active.png') no-repeat
-  }
-  .tab2.active {
-    color: #fff;
-    background: url('../assets/tab2-active.png') no-repeat
-  }
+  // .tab1.active {
+  //   color: #fff;
+  //   background: url('../common/img/tab1-active.png') no-repeat
+  // }
+  // .tab2.active {
+  //   color: #fff;
+  //   background: url('../common/img/tab2-active.png') no-repeat
+  // }
 
-  .tab1 {
-    width: 138px;
-    display: flex;
-    position: relative;
-    left: 26px;
-    align-items: center;
-    cursor: pointer;
-    background: url('../assets/tab1.png') no-repeat
-    p {
-      padding: 10px 0 6px 47px
-    }
-  }
+  // .tab1 {
+  //   width: 138px;
+  //   display: flex;
+  //   position: relative;
+  //   left: 26px;
+  //   align-items: center;
+  //   cursor: pointer;
+  //   background: url('../common/img/tab1.png') no-repeat
+  //   p {
+  //     padding: 10px 0 6px 47px
+  //   }
+  // }
 
-  .tab2 {
-    position: relative;
-    left: -7px;
-    width:350px;
-    cursor: pointer;
-    background: url('../assets/tab2.png') no-repeat, url('../assets/tab2-active.png') no-repeat;
-    p {
-      margin-top: 9px;
-      text-align: center;
-    }
-  }
+  // .tab2 {
+  //   position: relative;
+  //   left: -7px;
+  //   width:350px;
+  //   cursor: pointer;
+  //   background: url('../common/img/tab2.png') no-repeat, url('../common/img/tab2-active.png') no-repeat;
+  //   p {
+  //     margin-top: 9px;
+  //     text-align: center;
+  //   }
+  // }
 }
 
 .main {
@@ -1089,9 +1112,10 @@ export default {
     }
     .header {
       position: absolute;
+      font-size: 16px;
       z-index: 99;
-      top: 54px;
-      left: 0;
+      top: 56px;
+      left: 6px;
       right: 0;
       margin: auto;
       text-align: center;
@@ -1099,7 +1123,7 @@ export default {
     .body {
         width: 880px;
         height: 750px;
-        //background: url('../common/img/mapBg.png') no-repeat;  
+        //background: url('../assets/mapBg.png') no-repeat;  
         background-size: 100% 82%;
         position: relative;
         top: 4px;
@@ -1147,11 +1171,17 @@ export default {
     display: flex;
     position: relative;
     top: -114px;
-    left: 40px;
+    left: 77px;
+    &:nth-child(1){
+      display: none;
+    }
     .item {
       flex: 1;
       display: flex;
       justify-content: center;
+      &:nth-of-type(1) {
+        display: none;
+      }
       img {
         margin-right: 10px;
       }
@@ -1174,7 +1204,7 @@ export default {
     bottom: 0;
     width: 100%;
     height: 14px;
-    background: $bg-panel;
+    // background: #050A27;
   }
 }
 </style>
