@@ -1,6 +1,10 @@
 <template>
   <div class="device-board">
-    <p>001</p>
+    <img :src="unSelected.src" alt="">
+    <div class="content">
+      <p class="active">{{unSelected.num}}</p>
+      <p class="name">{{unSelected.name}}</p>
+    </div>
   </div>
 </template>
 
@@ -10,9 +14,20 @@ export default {
   data() {
     return {}
   },
+  props: {
+    unSelected: {
+      type: Object
+    }
+  },
   components: {}
 }
 </script>
 
 <style scoped lang="stylus">
+.device-board
+  margin-top 10px
+  .content
+    position relative
+    top -55px
+    font-size 14px
 </style>

@@ -15,7 +15,7 @@
           </el-select>
 
           <div class="graph">
-            <component :is="componetName"></component>
+            <component :is="componetName" :unSelected="item"></component>
           </div>
         </div>
       </div>
@@ -29,7 +29,7 @@ export default {
   name: '',
   data() {
     return {
-      componetName: 'Cirque',
+      componetName: 'Board',
       value: '',
       arr: [{
         name: '设备类型',
@@ -89,9 +89,9 @@ export default {
         .select
           width 120px!important
         .graph
-          position relative
-          top -14px
-          left 30px
+          // position relative
+          // top -14px
+          // left 30px
           .cirque
             width 100%
             height 300px

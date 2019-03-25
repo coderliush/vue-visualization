@@ -101,7 +101,12 @@ export default {
   filters:{
     splitNum(num){
       if(num===null) return '暂无';
-      return (num || 0).toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,')
+      let str = (num || 0).toString()
+      if (str.indexOf('.') === -1) {
+        return str.replace(/(\d)(?=(?:\d{3})+$)/g, '$1,')
+      } else {
+        return str.substring(0, str.indexOf('.')).replace(/(\d)(?=(?:\d{3})+$)/g, '$1,') + str.substring(str.indexOf('.'))
+      }
     }
   },
   data() {
@@ -173,7 +178,6 @@ export default {
     // })]);
     // this.districtselescts.push(0);
     this.orgs = await getorg;
-    console.log('this', this.orgs)
     this.init();
    
     // document.getElementById("#map").omo = e =>{
