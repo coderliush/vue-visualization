@@ -237,17 +237,13 @@ export default {
       // this.mapArr[1].num = httpresult.chargeCount;
       const datalist = httpresult.cell;
       const rooms = httpresult.room;
+      const roomcache = {};
+      rooms.forEach(r=>roomcache[r.id]=r.count);
       //const datalist2 = httpresult.device;
       if(isleaf) villages = await getvillage;
       for(var i =0;i<datalist.length;i++){
         var node = datalist[i];
-
-        //var node2 = datalist2.find(item=>item.id==node.id);
-        //if(node2) node.deviceCount = node2.count;
-        //else node.count = 0;
         node.cellCount = node.count;
-        node.roomCount = rooms[i].count;
-        
         var find =null;
         if(isleaf){
           find = villages.find(item=>item.id===node.id);
@@ -268,6 +264,7 @@ export default {
           node.lng = find.lng;
           node.lat = find.lat;
         }
+        node.roomCount = roomcache[node.id]||0;
       }
       var showlist = datalist.filter(d=>d.cellCount);
       this.cellcount = showlist.reduce((p,c)=>{
@@ -292,17 +289,13 @@ export default {
       // this.mapArr[1].num = httpresult.chargeCount;
       const datalist = httpresult.cell;
       const rooms = httpresult.room;
+      const roomcache = {};
+      rooms.forEach(r=>roomcache[r.id]=r.count);
       //const datalist2 = httpresult.device;
       if(isleaf) villages = await getvillage;
       for(var i =0;i<datalist.length;i++){
         var node = datalist[i];
-
-        // var node2 = datalist2.find(item=>item.id==node.id);
-        // if(node2) node.deviceCount = node2.count;
-        // else node.count = 0;
         node.cellCount = node.count;
-        node.roomCount = rooms[i].count;
-
         var find =null;
         if(isleaf){
           find = villages.find(item=>item.id===node.id);
@@ -315,6 +308,7 @@ export default {
           node.lng = find.lng;
           node.lat = find.lat;
         }
+        node.roomCount = roomcache[node.id]||0;
       }
       var showlist = datalist.filter(d=>d.cellCount);
       this.cellcount = showlist.reduce((p,c)=>{

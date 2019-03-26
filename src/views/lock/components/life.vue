@@ -7,8 +7,12 @@
       <span>设备总计</span>
       <span class="active">XXX</span>
     </div>
-    <div class="content">
-      
+    <div class="content"> 
+      <div v-for="(item, index) in list" :key="index">
+        <el-select>
+          
+        </el-select>
+      </div>
     </div>
   </div>
 </template>
