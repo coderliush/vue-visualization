@@ -9,13 +9,19 @@
     </div>
 
     <div class="device-container">
-      <div v-for="(item, index) in arr" :key="index" class="item">
+      <div v-for="(item, index) in list" :key="index" class="item">
           <el-select v-model="value" class="select">
             <el-option :label="item.label" :value="item.value" onChange="onSelect"></el-option>
           </el-select>
 
           <div class="graph">
-            <component :is="componetName" :unSelected="item"></component>
+            <div class="device-no-data">
+              <img :src="item.src" alt="">
+              <div class="content">
+                <p class="active">{{item.num}}</p>
+                <p class="name">{{item.name}}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -24,14 +30,13 @@
 
 <script type="text/ecmascript-6">
 import Cirque from 'components/cirque'
-import Board from 'components/device-board'
 export default {
   name: '',
   data() {
     return {
       componetName: 'Board',
       value: '',
-      arr: [{
+      list: [{
         name: '设备类型',
         src: require('../../../assets/device-type.png'),
         options: {value: 1, label: '设备类型'}
@@ -55,8 +60,11 @@ export default {
       console.log('1')
     }
   },
+  async mounted() {
+    const getDeviceType = await this.$http.get('/dmp/api/Lock/CountLockUnWork')
+    console.log('getDeviceType', getDeviceType)
+  },
   components: {
-    Board,
     Cirque
   }
 }
@@ -89,15 +97,20 @@ export default {
         .select
           width 120px!important
         .graph
-          // position relative
-          // top -14px
-          // left 30px
+          .device-no-data
+            margin-top 10px
+            img
+              width 39%
+            .content
+              position relative
+              top -55px
+              font-size 14px
           .cirque
             width 100%
             height 300px
           p
             position relative
-            top -50px
+            top -6px
             font-size 14px
 
 

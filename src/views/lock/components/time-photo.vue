@@ -9,7 +9,7 @@
         type="datetime"
         placeholder="检索时间（默认当下）"
         default-time="12:00:00"
-        @change="change"
+        @change="onChange"
       >
       </el-date-picker>
       <span>本部设备异常汇总：未安装</span>
@@ -49,7 +49,7 @@ export default {
     }
   },
   methods: {
-    change(e) {
+    onChange(e) {
       let X
       if (!this.hideSideBar) {
         const hasSideX = 183, hasSideGap = 50.5

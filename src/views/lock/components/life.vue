@@ -14,7 +14,6 @@
         </el-select>
         <div class="life-no-data">
           <img src="../../../assets/cirque.png" alt="">
-          <p>{{value}}</p>
           <p>{{item.options.label}}</p>
           <p>{{item.num}}</p>
           <img class="connect" src="../../../assets/connect.png" alt="">

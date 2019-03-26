@@ -15,8 +15,8 @@ module.exports = {
 
   devServer: {
     proxy: {
-      '/api': {
-        target: 'http://172.16.0.148:20002' 
+      '/dmp': {
+        target: 'http://172.16.0.148:30000' 
       }
     }
   }
