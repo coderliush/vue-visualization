@@ -1,1 +1,1 @@
-export const position = state => state.position
+export const ratio = state => state.ratio

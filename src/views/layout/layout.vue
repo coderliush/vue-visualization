@@ -12,6 +12,7 @@
 import SideBar from './components/SideBar'
 import NavBar from './components/NavBar'
 import Views from '../lock/index'
+import {mapMutations} from 'vuex'
 export default {
   name: '',
   data() {
@@ -30,7 +31,12 @@ export default {
       layout.style.transformOrigin = '0 0'
       layout.style.transform =  `scale(${rap}) translateZ(0)`
       layout.style.width = '1903px'
+
+      this.setRatio(rap)
     },
+    ...mapMutations({
+      setRatio: 'SET_RATIO'
+    })
   },
   components: {
     SideBar,

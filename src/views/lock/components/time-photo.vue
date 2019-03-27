@@ -4,12 +4,14 @@
       <span class="dot"></span>
       <span>时间快照</span>
       <el-date-picker
+        ref="datePicker"
         class="picker"
         v-model="value"
         type="datetime"
         placeholder="检索时间（默认当下）"
         default-time="12:00:00"
         @change="onChange"
+        @focus="onFocus"
       >
       </el-date-picker>
       <span>本部设备异常汇总：未安装</span>
@@ -37,7 +39,8 @@
 </template>
 
 <script type="text/ecmascript-6">
-import {mapMutations} from 'vuex'
+import Vue from 'vue'
+import {mapGetters ,mapMutations} from 'vuex'
 export default {
   name: "",
   data() {
@@ -46,8 +49,14 @@ export default {
       value: '',
       hours: '',
       originX: 183,
-      gap: 50.5
+      gap: 50.5,
+      rap: null
     }
+  },
+  computed: {
+    ...mapGetters([
+      'ratio'
+    ])
   },
   methods: {
     onChange(e) {
@@ -64,7 +73,16 @@ export default {
     },
     ...mapMutations({
       setTime: 'SET_TIME'
-    })
+    }),
+    onFocus() {
+      // 日期选择版的放大比例
+      this.rap = this.ratio + 0.1
+      Vue.nextTick(()=>{
+        document.getElementsByClassName('el-picker-panel')[0].style.width = '1200px!imoportant'
+        document.getElementsByClassName('el-picker-panel')[0].style.transformOrigin = '0 0'
+        document.getElementsByClassName('el-picker-panel')[0].style.transform = `scale(${this.rap}) translateZ(0)`
+      })
+    }
   },
   mounted() {
     this.$bus.$on('close', ()=>{

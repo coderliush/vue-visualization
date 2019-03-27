@@ -1,6 +1,7 @@
 const state = {
   params: {
-    time: '',
+    ratio: null,
+    time: null,
   }
 }
 

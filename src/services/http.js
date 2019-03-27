@@ -77,10 +77,10 @@ const handleResult = (res) => {
         }
 
     }
-    if (res.status === 401) {
-        location.href = "#/login"
+    // if (res.status === 401) {
+    //     location.href = "#/login"
 
-    }
+    // }
     throw res
 }
 
