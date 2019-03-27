@@ -28,21 +28,23 @@ export default {
 
 <style scoped lang="stylus">
   @import '~styles/variable'
-  img 
-    width 100%
-  .content
-    position relative
-    .active
-      position absolute
-      top -108px
+  .circle
+    min-width 190px
+    img 
+      width 100%
+    .content
+      position relative
+      top -50%
       left 50%
-      transform translateX(-50%)
-      color $color-active
-      font-size 24px
-    .name 
-      position absolute
-      top -74px
-      left 50%
-      transform translateX(-50%)
-      font-size $font-small
+      .active
+        position absolute
+        top -18px
+        color $color-active
+        font-size 26px
+        transform translateX(-50%)
+      .name 
+        position absolute
+        top 21px
+        word-break keep-all
+        transform translateX(-50%)
 </style>

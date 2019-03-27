@@ -28,29 +28,29 @@ export default {
       componentName: 'Cirque',
       boardLeft: {
         provice: {
-          num: '10',
+          num: '1000',
           name: '省公司'
         },
         city: {
-          num: '10',
+          num: '1000',
           name: '城市公司'
         },
         company: {
-          num: '10',
+          num: '10000',
           name: '分公司'
         },
       },
       boardRight: {
         servicesCenter: {
-          num: '10',
+          num: '100000',
           name: '服务中心'
         },
         village: {
-          num: '10',
+          num: '100000',
           name: '小区'
         },
         unit: {
-          num: '10',
+          num: '100000',
           name: '单元'
         },
       },
@@ -134,7 +134,6 @@ export default {
       display flex
       align-items center
       padding 20px 10px
-      
       .dot
         margin-right 10px
         dot($color-active)
@@ -145,7 +144,7 @@ export default {
       display flex
       .left, .right
         float left
-        padding 60px 100px 0 100px 
+        padding 52px 84px
         .board
           height 33.33%
       .map
