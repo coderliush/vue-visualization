@@ -1,7 +1,2 @@
-export const GET_MOUSE_EVENT = 'GET_MOUSE_EVENT'
+export const SET_TIME = 'SET_TIME'
 
-export const TOOLTIP_PARAMS = 'TOOLTIP_PARAMS'
-
-export const TOOLTIP_CONTEXT = 'TOOLTIP_CONTEXT'
-
-export const GET_TOOLTIP_TYPE = 'GET_TOOLTIP_TYPE'

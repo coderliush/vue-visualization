@@ -37,6 +37,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+import {mapMutations} from 'vuex'
 export default {
   name: "",
   data() {
@@ -58,8 +59,12 @@ export default {
         const noSideX = 250, noSideGap = 52
         X = noSideX + e.getHours() * noSideGap
       }
-      this.$refs.tag.style.left = `${X}px`
-    }
+      this.$refs.tag.style.left = `${X}px`,
+      this.setTime(e)
+    },
+    ...mapMutations({
+      setTime: 'SET_TIME'
+    })
   },
   mounted() {
     this.$bus.$on('close', ()=>{

@@ -1,8 +1,7 @@
 const state = {
-  position: {},
-  tooltipParams: {},
-  tooltipContext: {},
-  tooltipType: ''
+  params: {
+    time: '',
+  }
 }
 
 export default state
