@@ -61,8 +61,8 @@ export default {
     }
   },
   async mounted() {
-    const getDeviceType = await this.$http.get('/dmp/api/Lock/CountLockUnWork')
-    console.log('getDeviceType', getDeviceType)
+    // const getDeviceType = await this.$http.get('/dmp/api/Lock/CountLockUnWork')
+    // console.log('getDeviceType', getDeviceType)
   },
   components: {
     Cirque
