@@ -324,18 +324,18 @@ export default {
     },
     //下拉选择事件
     async SelectChange(index, id) {
-      console.log('001')
+      // 前四个的下拉框 
       if(index&&!id){
-        if(this.isActive) this.$emit('nodechange',{id:this.orgselescts[index-1],type:1});
-        else this.$emit('nodechange',{id:this.districtselescts[index-1],type:2});
+        if(this.isActive) this.$emit('nodechange',{id:this.orgselescts[index-1],type:1, index});
+        else this.$emit('nodechange',{id:this.districtselescts[index-1],type:2, index});
       }
       else {
         if(this.isActive&&id===0&&index===0){
            var rootnode = this.orgs.find(item=>item.parrentid==0);
-           this.$emit('nodechange',{id:rootnode.id,type:this.isActive?1:2});
+           this.$emit('nodechange',{id:rootnode.id,type:this.isActive?1:2, index});
         }
         else
-          this.$emit('nodechange',{id:id,type:this.isActive?1:2});
+          this.$emit('nodechange',{id:id,type:this.isActive?1:2, index});
       }
 
       this.showtype=0;//显示地图

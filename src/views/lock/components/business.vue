@@ -27,6 +27,7 @@ export default {
   name: 'app',
   data() {
     return {
+      selectedIndex: null,
       componentName: 'Cirque',
       boardLeft: {
         provice: {
@@ -99,6 +100,7 @@ export default {
     //   // this.$refs.left.flush(data)          //  圆环注释
     // },
     async nodechange(nodedata,isInterval){
+      this.selectedIndex = nodedata.index
       this.setNodeData(nodedata)                // 存储当前节点
       if(!isInterval) this.cachenode = nodedata;//缓存当前节点
       this.Flush(nodedata,isInterval);
