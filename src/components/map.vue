@@ -74,7 +74,7 @@
           <div class="item" v-for="(item, index) in mapArr" :key="index">
             <img :src="item.url" alt>
             <div v-if="item.nums" style="position: relative;">
-              <p style="z-index: 999; height: 20px;padding-right: 14px;">{{item.name}}</p>
+              <p style="position: relative; z-index: 999; height: 20px;padding-right: 14px; background: #103045;">{{item.name}}</p>
               <div>
                 <transition-group name="slide">
                   <p v-for="num in item.nums" :key="num" class="number-active">{{num|splitNum}}</p>
@@ -1021,7 +1021,7 @@ export default {
 .number-active {
   position: absolute;
   top: 0;
-  color: $number-active;
+  color: $color-active;
   font-weight: bold;
 }
 
