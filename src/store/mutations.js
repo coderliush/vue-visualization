@@ -6,8 +6,8 @@ const mutations = {
   [types.SET_RATIO](state, ratio) {
     state.ratio = ratio
   },
-  [types.SET_NODE_DATA](state, nodaData) {
-    state.params.nodaData = nodaData
+  [types.SET_NODE_DATA](state, nodeData) {
+    state.params.nodeData = nodeData
   },
 }
 

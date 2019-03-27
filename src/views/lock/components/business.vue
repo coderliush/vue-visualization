@@ -21,7 +21,7 @@ import Cirque from 'components/cirque'
 import Board from 'components/business-board'
 import BMap from 'components/map'
 import {computedPercent} from 'utils/computedPercent'
-import {mapMutations} from 'vuex'
+import {mapGetters, mapMutations} from 'vuex'
 
 export default {
   name: 'app',
@@ -60,6 +60,20 @@ export default {
       update: false
     }
   },
+  watch: {
+    params: {
+      handler: function(val, oldVal) {
+        this.selectedIndex = val.nodeData.index
+        console.log('this.selectedIndex', this.selectedIndex)
+      },
+      deep: true
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'params'
+    ])
+  },
   mounted(){
     setInterval(()=>{
       if(this.cachenode) this.nodechange(this.cachenode,true);
@@ -68,6 +82,7 @@ export default {
     this.getconfig.then(config=>{
       this.config = config;
     });
+
   },
   destroyed(){
     window.onresize=null;
@@ -100,7 +115,6 @@ export default {
     //   // this.$refs.left.flush(data)          //  圆环注释
     // },
     async nodechange(nodedata,isInterval){
-      this.selectedIndex = nodedata.index
       this.setNodeData(nodedata)                // 存储当前节点
       if(!isInterval) this.cachenode = nodedata;//缓存当前节点
       this.Flush(nodedata,isInterval);
