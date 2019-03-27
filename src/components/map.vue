@@ -324,6 +324,7 @@ export default {
     },
     //下拉选择事件
     async SelectChange(index, id) {
+      console.log('001')
       if(index&&!id){
         if(this.isActive) this.$emit('nodechange',{id:this.orgselescts[index-1],type:1});
         else this.$emit('nodechange',{id:this.districtselescts[index-1],type:2});

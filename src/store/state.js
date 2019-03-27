@@ -1,8 +1,9 @@
 const state = {
   params: {
-    ratio: null,
     time: null,
-  }
+    nodeData: null
+  },
+  ratio: null,
 }
 
 export default state

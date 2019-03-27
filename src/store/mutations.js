@@ -6,6 +6,9 @@ const mutations = {
   [types.SET_RATIO](state, ratio) {
     state.ratio = ratio
   },
+  [types.SET_NODE_DATA](state, nodaData) {
+    state.params.nodaData = nodaData
+  },
 }
 
 export default mutations

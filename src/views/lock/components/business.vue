@@ -9,7 +9,7 @@
     </div>
 
     <div class="map-wrapper">
-      <div class="right"><board v-for="(item, index) in boardLeft" :key="index" :content="item" class="board"></board></div>
+      <div class="left"><board v-for="(item, index) in boardLeft" :key="index" :content="item" class="board"></board></div>
       <b-map class="map" ref="map" @nodechange="nodechange" />
       <div class="right"><board v-for="(item, index) in boardRight" :key="index" :content="item" class="board"></board></div>
     </div>
@@ -21,6 +21,8 @@ import Cirque from 'components/cirque'
 import Board from 'components/business-board'
 import BMap from 'components/map'
 import {computedPercent} from 'utils/computedPercent'
+import {mapMutations} from 'vuex'
+
 export default {
   name: 'app',
   data() {
@@ -97,6 +99,7 @@ export default {
     //   // this.$refs.left.flush(data)          //  圆环注释
     // },
     async nodechange(nodedata,isInterval){
+      this.setNodeData(nodedata)                // 存储当前节点
       if(!isInterval) this.cachenode = nodedata;//缓存当前节点
       this.Flush(nodedata,isInterval);
       if(!this.config) await this.getconfig;
@@ -114,7 +117,10 @@ export default {
       this.$refs.map.setTabNum(3,httpresult.consumSum);
       // this.$refs.map.mapArr[0].num= httpresult.lockRecord;
       // this.$refs.map.mapArr[1].num= httpresult.chargeCount;
-    }
+    },
+    ...mapMutations({
+      setNodeData: 'SET_NODE_DATA'
+    })
   },
   components: {
     Cirque,
@@ -145,12 +151,12 @@ export default {
     .map-wrapper
       display flex
       .left, .right
-        float left
+        width 22.5%
         padding 52px 84px
         .board
           height 33.33%
-      .map
-        flex 1
+      // .map
+      //   flex 1
 </style>
 
 
