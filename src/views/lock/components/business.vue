@@ -9,9 +9,37 @@
     </div>
 
     <div class="map-wrapper">
-      <div class="left"><board v-for="(item, index) in boardLeft" :key="index" :content="item" class="board"></board></div>
+      <!-- <div class="left"><board v-for="(item, index) in boardLeft" :key="index" :content="item" class="board"></board></div> -->
+      <div class="group">
+        <div class="item">
+          <!-- <board :content="{name: '省公司', num: 1000}" class="board"></board> -->
+          <cirque></cirque>
+        </div>
+        <div class="item">
+          <!-- <board :content="{name: '省公司', num: 1000}" class="board"></board> -->
+          <cirque></cirque>
+        </div>
+        <div class="item">
+          <!-- <board :content="{name: '省公司', num: 1000}" class="board"></board> -->
+          <cirque></cirque>
+        </div>
+      </div>
       <b-map class="map" ref="map" @nodechange="nodechange" />
-      <div class="right"><board v-for="(item, index) in boardRight" :key="index" :content="item" class="board"></board></div>
+      <!-- <div class="group"><board v-for="(item, index) in boardRight" :key="index" :content="item" class="board"></board></div> -->
+      <div class="group">
+        <div class="item">
+          <!-- <board :content="{name: '省公司', num: 1000}" class="board"></board> -->
+          <cirque></cirque>
+        </div>
+        <div class="item">
+          <!-- <board :content="{name: '省公司', num: 1000}" class="board"></board> -->
+          <cirque></cirque>
+        </div>
+        <div class="item">
+          <!-- <board :content="{name: '省公司', num: 1000}" class="board"></board> -->
+          <cirque></cirque>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -166,13 +194,16 @@ export default {
         color $color-active
     .map-wrapper
       display flex
-      .left, .right
-        width 22.5%
-        padding 52px 84px
-        .board
-          height 33.33%
-      // .map
-      //   flex 1
+      min-height 892px
+      .group
+        width 336px
+        .item
+          width 100%
+          padding 4px 10px
+          .board
+            height 33.33%
+        // .map
+        //   flex 1
 </style>
 
 

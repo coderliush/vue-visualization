@@ -107,13 +107,13 @@ export default {
           scrap = this.$refs.cancel.getContext("2d"),
           service = this.$refs.service.getContext("2d"),
           offline = this.$refs.offline.getContext("2d")
-      register.beginPath(); register.moveTo(40,50); register.lineTo(100,50); register.lineTo(120,60); register.strokeStyle="#7CCCEF"; register.stroke()
-      offline.beginPath(); offline.moveTo(0,110); offline.lineTo(40,110); offline.lineTo(80,140); offline.strokeStyle="#7CCCEF"; offline.stroke()
-      install.beginPath(); install.moveTo(190,60); install.lineTo(210,50); install.lineTo(270,50); install.strokeStyle="#7CCCEF"; install.stroke()
-      check.beginPath(); check.moveTo(240,120); check.lineTo(260,110); check.lineTo(340,110); check.strokeStyle="#7CCCEF"; check.stroke()
-      cancel.beginPath(); cancel.moveTo(220,60); cancel.lineTo(240,80); cancel.lineTo(340,80); cancel.strokeStyle="#7CCCEF"; cancel.stroke()
-      scrap.beginPath(); scrap.moveTo(160,100); scrap.lineTo(180,120); scrap.lineTo(240,120); scrap.strokeStyle="#7CCCEF"; scrap.stroke()
-      service.beginPath(); service.moveTo(80,60); service.lineTo(60,80); service.lineTo(0,80); service.strokeStyle="#7CCCEF"; service.stroke()
+      register.beginPath(); register.moveTo(45,60); register.lineTo(100,60); register.lineTo(120,80); register.strokeStyle="#7CCCEF"; register.stroke()
+      offline.beginPath(); offline.moveTo(10,120); offline.lineTo(60,120); offline.lineTo(80,150); offline.strokeStyle="#7CCCEF"; offline.stroke()
+      install.beginPath(); install.moveTo(190,90); install.lineTo(210,60); install.lineTo(270,60); install.strokeStyle="#7CCCEF"; install.stroke()
+      check.beginPath(); check.moveTo(230,130); check.lineTo(250,115); check.lineTo(345,115); check.strokeStyle="#7CCCEF"; check.stroke()
+      cancel.beginPath(); cancel.moveTo(220,60); cancel.lineTo(230,75); cancel.lineTo(280,75); cancel.strokeStyle="#7CCCEF"; cancel.stroke()
+      scrap.beginPath(); scrap.moveTo(160,90); scrap.lineTo(170,115); scrap.lineTo(230,115); scrap.strokeStyle="#7CCCEF"; scrap.stroke()
+      service.beginPath(); service.moveTo(90,60); service.lineTo(70,80); service.lineTo(20,80); service.strokeStyle="#7CCCEF"; service.stroke()
     },
   },
   components: {}
@@ -128,33 +128,36 @@ export default {
     p
       position absolute
     .register
-      top 28px
+      top 40px
       left 53px
     .install
-      top 28px
+      top 40px
       left 214px
     .check
-      top 88px
+      top 96px
       left 256px
     .cancel
-      top 210px
+      top 205px
       left 245px
     .scrap
-      top 250px
-      left 185px
+      top 245px
+      left 190px
     .service
-      top 211px
-      left 7px
+      top 210px
+      left 27px
     .offline
-      top 92px
-      left 6px
+      top 98px
+      left 18px
     canvas 
       position absolute
       left 0
     .canvas-position
       top 150px
   .cirque
-    width 300px
-    height 300px
+    position relative
+    top 30px
+    left 30px
+    width 250px
+    height 250px
 
 </style>

@@ -1124,16 +1124,16 @@ export default {
         width: 880px;
         height: 750px;
         //background: url('../assets/mapBg.png') no-repeat;  
-        background-size: 100% 82%;
+        background-size: 100% 100%;
         position: relative;
         top: 4px;
         #map {
             width: 948px;
             height: 861px;  //完整地图的高度
-            transform: scale(0.927, 0.7);
+            transform: scale(0.927, 0.857);
             position: relative;
             z-index: -1;
-            top: -119px;
+            top: -58px;
             left: -34px;
         }
         #mappic {
@@ -1141,7 +1141,7 @@ export default {
             height: 750px;  //完整地图的高度
             position: relative;
             background: url('../assets/mapBg.png') no-repeat; 
-            background-size: 100% 82%;
+            background-size: 100% 100%;
             top: -861px;
         }
       .community {
@@ -1154,7 +1154,7 @@ export default {
     .count {
       position: absolute;
       z-index: 999;
-      bottom: 160px;
+      bottom: 42px;
       left: 52px;
       height: 0;
       p {
@@ -1170,7 +1170,7 @@ export default {
   .footer {
     display: flex;
     position: relative;
-    top: -114px;
+    top: 32px;
     left: 77px;
     &:nth-child(1){
       display: none;

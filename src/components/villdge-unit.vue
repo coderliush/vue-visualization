@@ -31,16 +31,14 @@ export default {
       left -1px
       text-align center
       background url('../assets/mapBg.png') no-repeat
-      background-size: 100% 82%
+      background-size: 100% 100%
       .img-wrapper
-        width 600px
-        height 360px
+        width 720px
         position relative
-        top 123px
+        top 108px
         margin 0 auto
         img
-          width 100%
-          max-height 360px
+          width 100%     
       .cell-wrapper
         background rgba(49, 116, 208, 0.5)
         img 
