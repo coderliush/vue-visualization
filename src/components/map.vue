@@ -93,6 +93,7 @@
 import axios from "axios"
 import villdgeUnit from './villdge-unit'
 import defaultImg from "../assets/no-pic.jpg"
+import {mapMutations} from 'vuex'
 export default {
   name: "",
   components: {
@@ -288,6 +289,7 @@ export default {
       // this.mapArr[0].num = httpresult.openCount;
       // this.mapArr[1].num = httpresult.chargeCount;
       const datalist = httpresult.cell;
+      this.setNumIndex({num: datalist.length, selectLength: 1});//地图左右存储个数和索引，当前是第一个 
       const rooms = httpresult.room;
       const roomcache = {};
       rooms.forEach(r=>roomcache[r.id]=r.count);
@@ -326,16 +328,16 @@ export default {
     async SelectChange(index, id) {
       // 前四个的下拉框 
       if(index&&!id){
-        if(this.isActive) this.$emit('nodechange',{id:this.orgselescts[index-1],type:1, index});
-        else this.$emit('nodechange',{id:this.districtselescts[index-1],type:2, index});
+        if(this.isActive) this.$emit('nodechange',{id:this.orgselescts[index-1],type:1});
+        else this.$emit('nodechange',{id:this.districtselescts[index-1],type:2});
       }
       else {
         if(this.isActive&&id===0&&index===0){
            var rootnode = this.orgs.find(item=>item.parrentid==0);
-           this.$emit('nodechange',{id:rootnode.id,type:this.isActive?1:2, index});
+           this.$emit('nodechange',{id:rootnode.id,type:this.isActive?1:2});
         }
         else
-          this.$emit('nodechange',{id:id,type:this.isActive?1:2, index});
+          this.$emit('nodechange',{id:id,type:this.isActive?1:2});
       }
 
       this.showtype=0;//显示地图
@@ -415,11 +417,17 @@ export default {
         }
         this.InitMap(node.name,datalist,node);//刷新地图
       }
+
+      let selectLength;// select 个数
+      if (this.villageoptions) { selectLength = 5 } else { selectLength = this.orgselesctoptions.length}
+      this.setNumIndex({num: datalist.length, selectLength});// 地图左右存储select option个数和select 的个数
     },
     async SelectVillage(id){
+        let selectLength;// 选择'全部' selectLength 为5, 选择其他设置为6
         if(id==0){//选择全部
           //this.$emit('nodechange',{id:this.orgselescts[this.orgselescts.length-1],type:1});//更新图表
           this.SelectChange(this.orgselescts.length-1,this.orgselescts[this.orgselescts.length-1]);
+          selectLength = 5
         }
         else{
           this.cellselect = null;//清除单元选择
@@ -450,30 +458,37 @@ export default {
           this.cellcount = httpresults[1].cellCount;
           this.roomcount = httpresults[2];
           // this.deviceCount = httpresults[1].deviceCount;
+
+          selectLength = 6
         }
+        this.setNumIndex({num: this.celloptions.length-1, selectLength})
     },
     async SelectCell(id){
-       if(id==0){//选择全部
-          //this.$emit('nodechange',{id:this.villageselect[this.villageselect.length-1],type:1});//更新图表
-          this.SelectVillage(this.villageselect);
-        }
-        else{
-          this.$emit('nodechange',{id:id,type:4});//更新图表
-          var cell = this.celloptions.find(v=>v.id==id);
-          this.cityname = cell.address;
-          this.showtype=2;
-          var getroomcount = this.$http.post(`/dmp/api/Cell/RoomCount`,{id:id,type:4});
-          const httpresult = await this.$http.get(`/dmp/api/GetImage/GetCuc?id=${id}`);//28147 ${id}
-          this.imgurl = httpresult.pic || defaultImg;   // 父元素
-          // this.setTabNum(0,httpresult.openCount);
-          // this.setTabNum(1,httpresult.chargeCount);
-          // this.mapArr[0].num = httpresult.openCount;
-          // this.mapArr[1].num = httpresult.chargeCount;
-          this.cellcount = httpresult.cellCount;
-          this.roomcount = await getroomcount;
-          // this.deviceCount = httpresult.deviceCount;
-          //this.celloptions = [{id:0,address:'全部'}, ...celloptions];//单元选择赋值
-        }
+      let selectLength;// 选择'全部' selectLength 设置为6, 选择其他设置为7
+      if(id==0){//选择全部
+        //this.$emit('nodechange',{id:this.villageselect[this.villageselect.length-1],type:1});//更新图表
+        this.SelectVillage(this.villageselect);
+        selectLength = 6
+      } else {
+        this.$emit('nodechange',{id:id,type:4});//更新图表
+        var cell = this.celloptions.find(v=>v.id==id);
+        this.cityname = cell.address;
+        this.showtype=2;
+        var getroomcount = this.$http.post(`/dmp/api/Cell/RoomCount`,{id:id,type:4});
+        const httpresult = await this.$http.get(`/dmp/api/GetImage/GetCuc?id=${id}`);//28147 ${id}
+        this.imgurl = httpresult.pic || defaultImg;   // 父元素
+        // this.setTabNum(0,httpresult.openCount);
+        // this.setTabNum(1,httpresult.chargeCount);
+        // this.mapArr[0].num = httpresult.openCount;
+        // this.mapArr[1].num = httpresult.chargeCount;
+        this.cellcount = httpresult.cellCount;
+        this.roomcount = await getroomcount;
+        // this.deviceCount = httpresult.deviceCount;
+        //this.celloptions = [{id:0,address:'全部'}, ...celloptions];//单元选择赋值
+        selectLength = 7
+      }
+
+      this.setNumIndex({num: this.orgselescts.length-1, selectLength})
     },
     wait (){
       return new Promise((reslove,reject)=>{
@@ -976,7 +991,9 @@ export default {
     SelectTab(isdistrict) {
       this.$isdistrict = isdistrict;
     },
-    
+    ...mapMutations({
+      setNumIndex: 'SET_NUM_INDEX'
+    })
   }
 };
 </script>

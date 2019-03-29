@@ -12,32 +12,32 @@
       <!-- <div class="left"><board v-for="(item, index) in boardLeft" :key="index" :content="item" class="board"></board></div> -->
       <div class="group">
         <div class="item">
-          <!-- <board :content="{name: '省公司', num: 1000}" class="board"></board> -->
-          <cirque></cirque>
+          <board v-show="selectLength === 1" ref='board1' :content="{name: '省公司', num: board1Num}" class="board"></board>
+          <cirque v-show="selectLength >= 2"></cirque>
         </div>
         <div class="item">
-          <!-- <board :content="{name: '省公司', num: 1000}" class="board"></board> -->
-          <cirque></cirque>
+          <board v-show="selectLength <= 2" ref="board2" :content="{name: '城市公司', num: board2Num}" class="board"></board>
+          <cirque v-show="selectLength >= 3"></cirque>
         </div>
         <div class="item">
-          <!-- <board :content="{name: '省公司', num: 1000}" class="board"></board> -->
-          <cirque></cirque>
+          <board v-show="selectLength <= 3" ref="board3" :content="{name: '分公司', num: board3Num}" class="board"></board>
+          <cirque v-show="selectLength >= 4"></cirque>
         </div>
       </div>
       <b-map class="map" ref="map" @nodechange="nodechange" />
       <!-- <div class="group"><board v-for="(item, index) in boardRight" :key="index" :content="item" class="board"></board></div> -->
       <div class="group">
         <div class="item">
-          <!-- <board :content="{name: '省公司', num: 1000}" class="board"></board> -->
-          <cirque></cirque>
+          <board v-show="selectLength <= 4" ref="board4" :content="{name: '服务中心', num: board4Num}" class="board"></board>
+          <cirque v-show="selectLength >= 5"></cirque>
         </div>
         <div class="item">
-          <!-- <board :content="{name: '省公司', num: 1000}" class="board"></board> -->
-          <cirque></cirque>
+          <board v-show="selectLength <= 5" ref="board5" :content="{name: '小区', num: board5Num}" class="board"></board>
+          <cirque v-show="selectLength >= 6"></cirque>
         </div>
         <div class="item">
-          <!-- <board :content="{name: '省公司', num: 1000}" class="board"></board> -->
-          <cirque></cirque>
+          <board v-show="selectLength <= 6" ref="board6" :content="{name: '单元', num: board6Num}" class="board"></board>
+          <cirque v-show="selectLength === 7"></cirque>
         </div>
       </div>
     </div>
@@ -55,8 +55,8 @@ export default {
   name: 'app',
   data() {
     return {
-      selectedIndex: null,
-      componentName: 'Cirque',
+      selectLength: 1,   // select 个数
+      board1Num: null, board2Num: null, board3Num: null, board4Num: null, board5Num: null, board6Num: null,
       boardLeft: {
         provice: {
           num: '1000',
@@ -89,17 +89,23 @@ export default {
     }
   },
   watch: {
-    params: {
-      handler: function(val, oldVal) {
-        this.selectedIndex = val.nodeData.index
-        console.log('this.selectedIndex', this.selectedIndex)
+    params: {                  
+      handler: async function(val) {
+        const res = await this.$http.post('/dmp/api/LockHistory/CountLockUnWorksHistory', val)
+        console.log('res', res)
       },
       deep: true
+    },
+    deviceNumLength() {       // 当前选择select 长度 和总数num   
+      this.selectLength = this.deviceNumLength.selectLength
+      let variable = `board${this.selectLength}Num`
+      this[variable] = this.deviceNumLength.num
     }
   },
   computed: {
     ...mapGetters([
-      'params'
+      'params',
+      'deviceNumLength'
     ])
   },
   mounted(){
@@ -197,11 +203,11 @@ export default {
       min-height 892px
       .group
         width 336px
+        padding 20px 0
         .item
           width 100%
           padding 4px 10px
-          .board
-            height 33.33%
+          text-align center
         // .map
         //   flex 1
 </style>

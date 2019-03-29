@@ -62,7 +62,7 @@ export default {
   },
   async mounted() {
     const getDeviceType = await this.$http.get('/dmp/api/LockHistory/GetLockTypeHistory')
-    console.log('getDeviceType', getDeviceType)
+    // console.log('getDeviceType', getDeviceType)
   },
   components: {
     Cirque

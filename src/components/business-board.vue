@@ -29,12 +29,13 @@ export default {
 <style scoped lang="stylus">
   @import '~styles/variable'
   .circle
-    min-width 190px
+    position relative
     img 
-      width 100%
+      width 60%
+      padding-top 70px
     .content
-      position relative
-      top -50%
+      position absolute
+      top 60%
       left 50%
       .active
         position absolute
