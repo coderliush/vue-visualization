@@ -9,35 +9,17 @@
     </div>
 
     <div class="map-wrapper">
-      <!-- <div class="left"><board v-for="(item, index) in boardLeft" :key="index" :content="item" class="board"></board></div> -->
       <div class="group">
-        <div class="item">
-          <board v-show="selectLength === 1" ref='board1' :content="{name: '省公司', num: board1Num}" class="board"></board>
-          <cirque v-show="selectLength >= 2"></cirque>
-        </div>
-        <div class="item">
-          <board v-show="selectLength <= 2" ref="board2" :content="{name: '城市公司', num: board2Num}" class="board"></board>
-          <cirque v-show="selectLength >= 3"></cirque>
-        </div>
-        <div class="item">
-          <board v-show="selectLength <= 3" ref="board3" :content="{name: '分公司', num: board3Num}" class="board"></board>
-          <cirque v-show="selectLength >= 4"></cirque>
+        <div class="item" v-for="(item, index) in boardList.slice(0, 3)" :key="index">
+          <board v-show="selectLength === index + 1" :ref="item.ref" :content="{name: item.name, num: item.num}" class="board"></board>
+          <cirque v-show="selectLength >= index + 2" :cirqueData="cirqueData"></cirque>
         </div>
       </div>
       <b-map class="map" ref="map" @nodechange="nodechange" />
-      <!-- <div class="group"><board v-for="(item, index) in boardRight" :key="index" :content="item" class="board"></board></div> -->
       <div class="group">
-        <div class="item">
-          <board v-show="selectLength <= 4" ref="board4" :content="{name: '服务中心', num: board4Num}" class="board"></board>
-          <cirque v-show="selectLength >= 5"></cirque>
-        </div>
-        <div class="item">
-          <board v-show="selectLength <= 5" ref="board5" :content="{name: '小区', num: board5Num}" class="board"></board>
-          <cirque v-show="selectLength >= 6"></cirque>
-        </div>
-        <div class="item">
-          <board v-show="selectLength <= 6" ref="board6" :content="{name: '单元', num: board6Num}" class="board"></board>
-          <cirque v-show="selectLength === 7"></cirque>
+        <div class="item" v-for="(item, index) in boardList.slice(4)" :key="index">
+          <board v-show="selectLength === index + 1" :ref="item.ref" :content="{name: item.name, num: item.num}" class="board"></board>
+          <cirque v-show="selectLength >= index + 2" :cirqueData="cirqueData"></cirque>
         </div>
       </div>
     </div>
@@ -45,10 +27,10 @@
 </template>
 
 <script type="text/ecmascript-6">
-import Cirque from 'components/cirque'
+import Cirque from 'components/shareCirque'
 import Board from 'components/business-board'
 import BMap from 'components/map'
-import {computedPercent} from 'utils/computedPercent'
+import objAddPercent from 'utils/objAddPercent'
 import {mapGetters, mapMutations} from 'vuex'
 
 export default {
@@ -56,50 +38,46 @@ export default {
   data() {
     return {
       selectLength: 1,   // select 个数
-      board1Num: null, board2Num: null, board3Num: null, board4Num: null, board5Num: null, board6Num: null,
-      boardLeft: {
-        provice: {
-          num: '1000',
-          name: '省公司'
-        },
-        city: {
-          num: '1000',
-          name: '城市公司'
-        },
-        company: {
-          num: '10000',
-          name: '分公司'
-        },
-      },
-      boardRight: {
-        servicesCenter: {
-          num: '100000',
-          name: '服务中心'
-        },
-        village: {
-          num: '100000',
-          name: '小区'
-        },
-        unit: {
-          num: '100000',
-          name: '单元'
-        },
-      },
-      update: false
+      cirqueData: null,
+      update: false,
+      boardList: [{
+        ref: 'board1',
+        name: '省公司',
+        num: null,
+      }, {
+        ref: 'board2',
+        name: '城市公司',
+        num: null,
+      }, {
+        ref: 'board3',
+        name: '分公司',
+        num: null,
+      }, {
+        ref: 'board4',
+        name: '服务中心',
+        num: null,
+      }, {
+        ref: 'board5',
+        name: '小区',
+        num: null,
+      }, {
+        ref: 'board6',
+        name: '单元',
+        num: null,
+      }]
     }
   },
   watch: {
     params: {                  
       handler: async function(val) {
         const res = await this.$http.post('/dmp/api/LockHistory/CountLockUnWorksHistory', val)
-        console.log('res', res)
+        this.cirqueData = objAddPercent(res)
       },
       deep: true
     },
     deviceNumLength() {       // 当前选择select 长度 和总数num   
       this.selectLength = this.deviceNumLength.selectLength
-      let variable = `board${this.selectLength}Num`
-      this[variable] = this.deviceNumLength.num
+      this.boardList[this.selectLength].num = this.deviceNumLength.num
     }
   },
   computed: {

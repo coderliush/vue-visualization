@@ -29,7 +29,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import Cirque from 'components/cirque'
+import Cirque from 'components/shareCirque'
 export default {
   name: '',
   data() {
