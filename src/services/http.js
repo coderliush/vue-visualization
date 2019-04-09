@@ -104,6 +104,10 @@ var http = {
     setheader(token) {
         this.header.Authorization = "Bearer " + token;
     },
+    getuser(){
+        if(!this.$getuser) this.$getuser=this.get('/dmp/api/Account/GetUser');
+        return this.$getuser;
+    },
     async get(url) {
         // block.block();
         const res = await axios.get(url, { headers: this.header }).catch(res => res);

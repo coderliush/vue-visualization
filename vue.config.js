@@ -11,6 +11,7 @@ module.exports = {
       .set('utils', resolve('src/utils'))
       .set('styles', resolve('src/styles'))
       .set('components', resolve('src/components'))
+      .set('services', resolve('src/services'))
   },
 
   devServer: {

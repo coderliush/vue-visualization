@@ -10,70 +10,138 @@
     <div class="content">
       <template>
         <el-table :data="tableData" style="width: 100%" class="table">
-          <el-table-column prop="device" label="设备类型"></el-table-column>
-          <el-table-column prop="servicer" label="供应商"></el-table-column>
+          <el-table-column prop="lockType" label="设备类型"></el-table-column>
+          <el-table-column prop="lockvendor" label="供应商"></el-table-column>
           <el-table-column prop="batch" label="批次号"></el-table-column>
-          <el-table-column prop="version" label="固体版本"></el-table-column>
-          <el-table-column prop="cell" label="单元地址" width="120"></el-table-column>
-          <el-table-column prop="time" label="运行时长"></el-table-column>
-          <el-table-column prop="register" label="注册"></el-table-column>
-          <el-table-column prop="installl" label="安装"></el-table-column>
-          <el-table-column prop="check" label="验收"></el-table-column>
-          <el-table-column prop="online" label="在线"></el-table-column>
+          <el-table-column prop="hardVersion" label="固体版本"></el-table-column>
+          <el-table-column prop="address" label="单元地址" width="120"></el-table-column>
+          <el-table-column prop="workTime" label="运行时长"></el-table-column>
+          <el-table-column label="注册">
+            <template slot-scope="scope">
+              <p>{{scope.row.register}}</p>
+              <p>{{scope.row.regdate}}</p>
+              <p>{{scope.row.regPerName}}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="安装">
+            <template slot-scope="scope">
+              <p>{{scope.row.install}}</p>
+              <p>{{scope.row.installTime}}</p>
+              <p>{{scope.row.installPerName}}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="验收">
+            <template slot-scope="scope">
+              <p>{{scope.row.accept}}</p>
+              <p>{{scope.row.acceptTime}}</p>
+              <p>{{scope.row.acceptPerName}}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="在线">
+            <template slot-scope="scope">
+              <p>{{scope.row.online}}</p>
+              <!-- <p>{{scope.row.acceptTime}}</p>
+              <p>{{scope.row.acceptPerName}}</p> -->
+            </template>
+          </el-table-column>
           <el-table-column prop="normal" label="数据正常"></el-table-column>
-          <el-table-column prop="repair" label="维修"></el-table-column>
-          <el-table-column prop="cancel" label="注销"></el-table-column>
-          <el-table-column prop="useless" label="报废"></el-table-column>
+          <el-table-column label="维修">
+            <template slot-scope="scope">
+              <p>{{scope.row.repair}}</p>
+              <p>{{scope.row.repairTime}}</p>
+              <p>{{scope.row.repairPerName}}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="注销">
+            <template slot-scope="scope">
+              <p>{{scope.row.cancel}}</p>
+              <p>{{scope.row.cancelTime}}</p>
+              <p>{{scope.row.cancelPerName}}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="报废">
+            <template slot-scope="scope">
+              <p>{{scope.row.dumping}}</p>
+              <p>{{scope.row.dumpingTime}}</p>
+              <p>{{scope.row.dumpingPerName}}</p>
+            </template>
+          </el-table-column>
           <el-table-column prop="history" label="历史"></el-table-column>
         </el-table>
       </template>
     </div>
 
-     <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="currentPage4"
-      :page-sizes="[10, 20, 30, 40]"
-      :page-size="10"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="40">
-    </el-pagination>
+    <div class="pageGroup">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="[10, 20, 30, 40]"
+        :page-size="10"
+        layout="total, prev, pager, next, sizes"
+        :total="totalCount">
+      </el-pagination>
+
+      <div class="jumper">
+        <span>到第</span>
+        <el-input class="input" v-model.number="jumper"></el-input>
+        <span>页</span>
+      </div>
+      <el-button class="button" @click="onButton">确定</el-button>
+    </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import table from 'components/table'
+import { mapGetters } from 'vuex'
 export default {
   name: '',
   data() {
     return {
-      currentPage4: 4,
-      tableData: [{
-        device: '网关',
-        servicer: '青客',
-        batch: '2018-12',
-        version: 'v4.0.0.0',
-        cell: '上海市建国中路103弄30号',
-        time: '1年06天23小时59分',
-        register: '注册',
-        installl: '安装',
-        check: '验收',
-        online: '在线',
-        normal: '正常',
-        repair: '维修',
-        cancel: '注销',
-        useless: '报废',
-        history: '历史'
-      },]
+      currentPage: 1,
+      tableData: [],
+      totalCount: null,
+      pageIndex: 1,
+      pageSize: 10,
+      jumper: null,
     }
+  },
+  computed: {
+    ...mapGetters([
+      'params'
+    ])
   },
   methods: {
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      this.pageSize = val
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.jumper = null
+      this.pageIndex = val
+      this.init(val)
+    },
+    onButton() {
+      this.currentPage = this.jumper
+      this.pageIndex = this.jumper
+      this.init()
+    },
+    async init(pageIndex) {
+      const obj = {
+        id: this.params.id,
+        type: this.params.type,
+        time: this.params.querytime,
+        pageIndex: this.jumper || this.pageIndex,
+        pageSize: this.pageSize,
+      }
+
+      const res = await this.$http.post('/dmp/api/LockHistory/GetLocksHistoryList', obj)
+      this.tableData = res.list
+      this.totalCount = res.totalCount
     }
+  },
+  mounted() {
+    this.init()
   },
   components: {}
 }
@@ -94,6 +162,9 @@ export default {
       justify-content space-between
       align-items center
       margin-bottom 20px
+      .left .dot
+        display inline-block
+        dot($color-active)
       .download 
         font-size $font-small
         padding 9px
@@ -108,4 +179,17 @@ export default {
       width 100%
       .table
         margin-bottom 20px
+    .pageGroup
+      display flex
+      .jumper
+        display flex
+        align-items center
+        span 
+          font-size $font-smaller
+          white-space nowrap
+      .button
+        margin-left 6px
+        padding 0 20px
+        color #fff!important
+        background #0375A7
 </style>

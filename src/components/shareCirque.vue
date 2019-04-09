@@ -1,13 +1,30 @@
 <template>
   <div class="cirque-wrapper">
     <div class="label">
-      <p class="register">未注册1</p>
-      <p class="install">未安装1</p>
-      <p class="check">未验收1</p>
-      <p class="cancel">注销1</p>
-      <p class="scrap">报废1</p>
-      <p class="service">维修1</p>
-      <p class="offline">离线1</p>
+      <!-- <p class="register">未注册 {{cirqueData.unRegisters}}</p>
+      <p class="install">未安装 {{cirqueData.unInstalls}}</p>
+      <p class="check">未验收 {{cirqueData.unAccepts}}</p>
+      <p class="cancel">注销 {{cirqueData.cancels}}</p>
+      <p class="scrap">报废 {{cirqueData.dumpings}}</p>
+      <p class="service">维修 {{cirqueData.repairs}}</p>
+      <p class="offline">离线 {{cirqueData.offlines}}</p> -->
+
+      <!-- <p class="register">未注册 {{isUpdate && cirqueData && cirqueData.unRegisters}}</p>
+      <p class="install">未安装 {{isUpdate && cirqueData &&  cirqueData.unInstalls}}</p>
+      <p class="check">未验收 {{isUpdate && cirqueData && cirqueData.unAccepts}}</p>
+      <p class="cancel">注销 {{isUpdate && cirqueData && cirqueData.cancels}}</p>
+      <p class="scrap">报废 {{isUpdate && cirqueData && cirqueData.dumpings}}</p>
+      <p class="service">维修 {{isUpdate && cirqueData && cirqueData.repairs}}</p>
+      <p class="offline">离线 {{isUpdate && cirqueData && cirqueData.offlines}}</p> -->
+
+      <p class="register">未注册 {{cirqueData && cirqueData.unRegisters}}</p>
+      <p class="install">未安装 {{cirqueData &&  cirqueData.unInstalls}}</p>
+      <p class="check">未验收 {{cirqueData && cirqueData.unAccepts}}</p>
+      <p class="cancel">注销 {{cirqueData && cirqueData.cancels}}</p>
+      <p class="scrap">报废 {{cirqueData && cirqueData.dumpings}}</p>
+      <p class="service">维修 {{cirqueData && cirqueData.repairs}}</p>
+      <p class="offline">离线 {{cirqueData && cirqueData.offlines}}</p>
+
       <canvas ref="register"></canvas>
       <canvas ref="install"></canvas>
       <canvas ref="check"></canvas>
@@ -25,35 +42,77 @@ export default {
   name: "cirque",
   props: {
     cirqueData: {
-      type: Object
+      type: Object,
     },
     graphic: {
-      type: Array
+      type: String
+    },
+    isUpdate: {    // 默认更新
+      type: Boolean,
+      default: true
     }
   },
   watch: {
     cirqueData() {
       this.list = []
-      for (let k in this.cirqueData) {
-        if (k.indexOf('percent') !== -1) {
-          this.list.push({
-            name: '',
-            value: 1,
-            percent: this.cirqueData[k]
-          })
+      this.order.forEach((item, index) => {
+        for (let k in this.cirqueData) {
+          if (k === item) {
+            this.list.push({
+              name: '',
+              value: 1,
+              percentName: k,
+              percent: this.cirqueData[k],
+              itemStyle: {
+                color: this.color[index],
+                borderWidth: 0
+              }
+            })
+          }
         }
-      }
-      this.init()
+      })
+      if (this.isUpdate !== false) {this.init()}
     }
   },
   data() {
     return {
-      list: []
+      // 圆环图顺序: 未安装, 未验收, 注销, 报废, 维修, 离线, 未注册
+      order: ['unInstallsPercent', 'unAcceptsPercent', 'cancelsPercent', 'dumpingsPercent', 'repairsPercent', 'offlinesPercent', 'unRegistersPercent'],
+      color: ['#7ABC12', '#1DA8FB', '#E7654B', '#979994', '#A26337', '#FDAE0B', '#FF67BB'], 
+      list: [{
+        name: '',
+        value: 1,
+        percent: '0%',
+      }, {
+        name: '',
+        value: 1,
+        percent: '0%'
+      }, {
+        name: '',
+        value: 1,
+        percent: '0%'
+      }, {
+        name: '',
+        value: 1,
+        percent: '0%'
+      }, {
+        name: '',
+        value: 1,
+        percent: '0%'
+      }, {
+        name: '',
+        value: 1,
+        percent: '0%'
+      }, {
+        name: '',
+        value: 1,
+        percent: '0%'
+      }]
     }
   },
   mounted() {
     this.initLabel()
-    this.init();
+    this.init()
   },
   methods: {
     init() {
@@ -67,30 +126,36 @@ export default {
           elements: [{
             type: 'text',
             style: {
-              text: '555',
-              width: 20,
-              height: 20
-              },
+              text: '',
+              fill: '#67B2DA',
+              font: 'bold 14px "Microsoft YaHei", sans-serif',
+            },
             left: 'center',
             top: 'center'
           }]
         },
         series: [
           {
-            type: "pie",
-            color: ['#7ABC12', '#1DA8FB', '#E7654B', '#979994', '#A26337', '#FDAE0B', '#FF67BB'],
+            type: "sunburst",
             data: this.list,
             label: {
               position: "inside",
+              color: '#000',
+              fontSize: 13,
+              rotate: 'tangential',
               formatter: (params) => {
                 return params.data.percent
               }
             },
-            radius: ['40%', '67%'],
+            itemStyle: {
+              borderWidth: 0
+            },
+            radius: ['45%', '67%'],
             animation: false
           }
         ],
       }
+      option.graphic.elements[0].style.text = this.graphic
       chart.setOption(option)
     },
     initLabel() {

@@ -9,8 +9,8 @@
         <p>统一设备生命周期管理平台</p>
       </div>
       <div class="info">
-        <span>欢迎您，XXX</span>
-        <span>【退出】</span>
+        <span>欢迎您，{{name}}</span>
+        <a class="loginout" @click="loginout">【退出】</a>
       </div>
     </div>
   </div>
@@ -20,11 +20,21 @@
 export default {
   name: '',
   data() {
-    return {}
+    return {
+      name:'XXX'
+    }
+  },
+  async mounted(){
+     const res = await this.$http.getuser();
+     this.name = res.userName;
   },
   methods: {
     close() {
       this.$bus.$emit('close')
+    },
+    loginout(){
+      this.$http.header.Authorization = null;
+      this.$router.push('/login')
     }
   },
   components: {
@@ -58,6 +68,8 @@ export default {
         top 26px
         right 0
         font-size $font-small
+        .loginout
+          cursor pointer
       .title
         width 480px
         height 54px

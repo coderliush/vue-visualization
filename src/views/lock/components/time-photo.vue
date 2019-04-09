@@ -14,27 +14,27 @@
         @focus="onFocus"
       >
       </el-date-picker>
-      <span>本部设备异常汇总：未安装</span>
-      <span class="active">18</span>
-      <span>未注册</span>
-      <span class="active">18</span>
+      <span>本部设备异常汇总：未注册</span>
+      <span class="active">{{nums.length !== 0 ? nums[0].falseStatusNums : null}}</span>
+      <span>未安装</span>
+      <span class="active">{{nums.length !== 0 ? nums[1].falseStatusNums : null}}</span>
       <span>未验收</span>
-      <span class="active">29</span>
+      <span class="active">{{nums.length !== 0 ? nums[2].falseStatusNums : null}}</span>
       <span>离线</span>
-      <span class="active">90</span>
+      <span class="active">{{ nums.length !== 0 ? nums[3].falseStatusNums : null}}</span>
       <span>维修</span>
-      <span class="active">4</span>
+      <span class="active">{{nums.length !== 0 ? nums[5].falseStatusNums : null}}</span>
       <span>注销</span>
-      <span class="active">4</span>
+      <span class="active">{{nums.length !== 0 ? nums[6].falseStatusNums : null}}</span>
       <span>报废</span>
-      <span class="active">0</span>
-      【<span class="red-dot"></span>】
-      <span>生命过程录制</span>
+      <span class="active">{{nums.length !== 0 ? nums[7].falseStatusNums : null}}</span>
+      <!-- 【<span class="red-dot"></span>】
+      <span>生命过程录制</span> -->
     </div>
-    <div class="axis">
+    <!-- <div class="axis">
       <img src="../../../assets/axis.png" alt="">
       <div class="tag" ref="tag"><span></span></div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -50,7 +50,8 @@ export default {
       hours: '',
       originX: 183,
       gap: 50.5,
-      rap: null
+      rap: null,
+      nums: [],
     }
   },
   computed: {
@@ -85,8 +86,12 @@ export default {
     }
   },
   mounted() {
-    this.$bus.$on('close', ()=>{
+    this.$bus.$on('close', () => {
       this.hideSideBar = !this.hideSideBar
+    })
+
+    this.$bus.$on('headerCount', (res) => {
+      this.nums = res
     })
   },
   components: {}
@@ -103,7 +108,7 @@ export default {
     .row
       display flex
       align-items center
-      margin-bottom 20px
+      margin 10px
       .dot
         margin-right 10px
         dot($color-active)

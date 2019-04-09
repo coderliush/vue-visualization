@@ -67,8 +67,8 @@
           <villdgeUnit :type="showtype" :vname="vname" :src="imgurl" v-show="showtype"></villdgeUnit>
         </div>
         <div class="count">
-          <p><span>设备数：</span><span>{{deviceCount|splitNum}}</span></p>
-          <p><span>房间数 / 单元数：</span><span>{{roomcount|splitNum}} / {{cellcount|splitNum}}</span></p>
+          <p><span>设备数：</span><span style="color: #0ff">{{deviceCount|splitNum}}</span></p>
+          <p><span>房间数 / 单元数：</span><span style="color: #0ff">{{roomcount|splitNum}} / {{cellcount|splitNum}}</span></p>
         </div>
         <div class="footer">
           <div class="item" v-for="(item, index) in mapArr" :key="index">
@@ -108,6 +108,12 @@ export default {
       } else {
         return str.substring(0, str.indexOf('.')).replace(/(\d)(?=(?:\d{3})+$)/g, '$1,') + str.substring(str.indexOf('.'))
       }
+    }
+  },
+  props :{
+    date : {
+      type:Date,
+      default:null
     }
   },
   data() {
@@ -168,8 +174,8 @@ export default {
     };
   },
   async mounted() {
-    const getdistrict = this.$http.get('/dmp/api/Map/Query');
-    const getorg = this.$http.get('/dmp/api/Org/Query');
+    const getdistrict = this.$http.get(`/dmp/api/Map/Query?time=${this.date}`);
+    const getorg = this.$http.get(`/dmp/api/Org/Query?time=${this.date}`);
     this.districts = await getdistrict;
     // this.districtselesctoptions.push([{id:0,name:'全部'},...this.districts.filter(d=>{
     //   if(d.name=='上海市'){
@@ -230,8 +236,8 @@ export default {
     //获取地图显示数据(行政区)
     async getdatalist(id,isleaf,path){
       var getvillage = null,villages = null;
-      if(isleaf)  getvillage = this.$http.get(`/dmp/api/Map/QueryVillage/${id}`);
-      const httpresult = await this.$http.post('/dmp/api/Map/MapPointCount',{id:id,isleaf:isleaf,path:path});
+      if(isleaf)  getvillage = this.$http.get(`/dmp/api/Map/QueryVillage/${id}?time=${this.date}`);
+      const httpresult = await this.$http.post('/dmp/api/Map/MapPointCount',{id:id,isleaf:isleaf,path:path,time:this.date});
       // this.setTabNum(0,httpresult.openCount);
       // this.setTabNum(1,httpresult.chargeCount);
       // this.mapArr[0].num = httpresult.openCount;
@@ -282,8 +288,8 @@ export default {
     //获取地图显示数据(五级架构)
     async getorgdatalist(id,isleaf,path){
       var getvillage = null,villages = null;
-      if(isleaf)  getvillage = this.$http.get(`/dmp/api/Org/QueryVillage/${id}`);
-      const httpresult = await this.$http.post('/dmp/api/Org/MapPointCount',{id:id,isleaf:isleaf,path:path});
+      if(isleaf)  getvillage = this.$http.get(`/dmp/api/Org/QueryVillage/${id}?time=${this.date}`);
+      const httpresult = await this.$http.post('/dmp/api/Org/MapPointCount',{id:id,isleaf:isleaf,path:path,time:this.date});
       // this.setTabNum(0,httpresult.openCount);
       // this.setTabNum(1,httpresult.chargeCount);
       // this.mapArr[0].num = httpresult.openCount;
@@ -436,9 +442,9 @@ export default {
           var village = this.villageoptions.find(v=>v.id==id);
           this.cityname = village.name;
           const httpresults = await this.$http.awaitTasks([
-            this.$http.get(`/dmp/api/Cell/QueryCell/${id}`),
-            this.$http.get(`/dmp/api/GetImage/GetVillage?id=${id}`),//1938 ${id}
-            this.$http.post(`/dmp/api/Cell/RoomCount`,{id:id,type:3})
+            this.$http.get(`/dmp/api/Cell/QueryCell/${id}?time=${this.date}`),
+            this.$http.get(`/dmp/api/GetImage/GetVillage?id=${id}&time=${this.date}`),//1938 ${id}
+            this.$http.post(`/dmp/api/Cell/RoomCount`,{id:id,type:3,time:this.date})
           ])
           const celloptions = httpresults[0];
           this.celloptions = [{id:0,address:'全部'}, ...celloptions];//单元选择赋值
@@ -474,8 +480,8 @@ export default {
         var cell = this.celloptions.find(v=>v.id==id);
         this.cityname = cell.address;
         this.showtype=2;
-        var getroomcount = this.$http.post(`/dmp/api/Cell/RoomCount`,{id:id,type:4});
-        const httpresult = await this.$http.get(`/dmp/api/GetImage/GetCuc?id=${id}`);//28147 ${id}
+        var getroomcount = this.$http.post(`/dmp/api/Cell/RoomCount`,{id:id,type:4,time:this.date});
+        const httpresult = await this.$http.get(`/dmp/api/GetImage/GetCuc?id=${id}&time=${this.date}`);//28147 ${id}
         this.imgurl = httpresult.pic || defaultImg;   // 父元素
         // this.setTabNum(0,httpresult.openCount);
         // this.setTabNum(1,httpresult.chargeCount);
@@ -805,6 +811,7 @@ export default {
                   node.deviceCount = deciveCount
                   if(curshowid==node.id) mapdiv.firstElementChild.innerHTML=`<div class="tooltip-wrapper">${node.name}<br />房间数:${node.roomCount}<br />单元数:${node.cellCount}<br />设备数:${deciveCount}</div>`
                 });
+                this.$bus.$emit('totalDevice', node.deviceCount) //设备总计
                 // return `${node.name}<br />公寓总数:${node.cellCount}`;//<br />公寓总数:${node.cellCount}<br />设备数:${node.deviceCount}
                 return `<div class="tooltip-wrapper">${node.name}<br />房间数:${node.roomCount}<br />单元数:${node.cellCount}</div>`;
               }
@@ -994,6 +1001,11 @@ export default {
     ...mapMutations({
       setNumIndex: 'SET_NUM_INDEX'
     })
+  },
+  watch:{
+    date(v){
+      this.SelectChange(0,0);
+    }
   }
 };
 </script>

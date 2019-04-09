@@ -1,21 +1,15 @@
 .el-progress-bar__inner
-  // text-align center!important
   font-size $font-normal!important
-  // left inherit
-  // right 0!important
 
 .el-progress-bar__outer
   background #0569ab!important
 
 .el-progress-bar__innerText
-  // position absolute
-  // right 0
-  // top 20%
   color #000!important
 
 .el-select
   width 100px
-  background #101847!important
+  // background #101847!important
 
 .el-input__inner
   background #103045!important
@@ -44,8 +38,6 @@
 .el-icon-arrow-left:before, .el-icon-arrow-right:before
   display none!important 
 
-// .el-carousel, .el-carousel__item.is-active.is-animating
-//   height 500px!important
 .el-select-dropdown__item 
   font-size 14px!important
 
@@ -72,14 +64,7 @@
 
 .el-tree-node__content
   height 40px
-  // padding-left 8px!important
   background #0573A4!important
-  // &:before 
-  //   content ''
-  //   width 30px
-  //   height 30px
-  &:hover
-    // color #00FFFF!important
 
 .el-tree-node__label
   font-size 16px!important
@@ -92,11 +77,15 @@
 .el-tree-node__expand-icon.expanded
   transform rotate(90deg)!important
 
+.treeitem:nth-child(1)
+  color red!important
+
 // ------------------------------------  日期  ---------------------------------------
 .el-picker-panel .el-input__inner, .el-date-editor .el-input__inner
   color #D2FFFF!important
   background #103045!important
   cursor pointer!important
+  font-size 16px
 
 .el-picker-panel__body .el-scrollbar:nth-of-type(2), .el-picker-panel__body .el-scrollbar:nth-of-type(3)
   display none!important
@@ -112,6 +101,8 @@
 .el-input__suffix, .el-button--text 
   display none!important
 
+.el-input__prefix
+  display none!important
 
 // ------------------------------------ 表格 --------------------------------------------------
 .el-table th
@@ -135,6 +126,9 @@
   &:hover
     background red!important
 
+.el-table--enable-row-hover .el-table__body tr:hover>td
+  background none!important
+
 // ------------------------------------------  分页 -------------------------------------------
 .el-pagination__total, .el-pagination__jump
   color #A5D2E2!important
@@ -148,25 +142,8 @@
   color #fff
   background #0476A8!important
 
+.jumper .el-input__inner
+  width 60px!important
+  height 20px!important
+  margin 0 4px!important
 
-
-// .el-tree-node > .el-tree-node__content:nth-of-type(1)
-//   &:before
-//     background url(../img/icon-online.png) no-repeat
-
-// .el-tree-node__content:nth-of-type(2)
-//   &:before
-//     background url(../img/icon-lock.png) no-repeat
-
-// .el-tree-node__content:nth-of-type(3)
-//   &:before
-//     background url(../img/icon-meter.png) no-repeat
-
-// .el-tree-node__content:nth-of-type(4)
-//   &:before
-//     background url(../img/icon-info.png) no-repeat
-
-
-// .el-tree-node__children
-//   &:before
-//     background url(../) no-repeat

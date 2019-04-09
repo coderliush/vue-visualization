@@ -3,42 +3,61 @@
     <div class="title">
       <span class="dot"></span>
       <span>运营异常检索（异常占比）</span>
-      <span class="active">2018-12-13</span>
+      <span class="active">{{querytime}}</span>
       <span>设备总计</span>
-      <span class="active">XXX</span>
+      <span class="active">{{total | splitNum}}</span>
     </div>
 
     <div class="map-wrapper">
       <div class="group">
         <div class="item" v-for="(item, index) in boardList.slice(0, 3)" :key="index">
-          <board v-show="selectLength === index + 1" :ref="item.ref" :content="{name: item.name, num: item.num}" class="board"></board>
-          <cirque v-show="selectLength >= index + 2" :cirqueData="cirqueData"></cirque>
+          <!-- selectLength 小于等于 索引 index 的时候，显示board。 -->
+          <!-- selectLength 等于当前的索引 index 加2时，显示circle。selectLength 大于 index 时, 显示到下级的 circle，本级同样显示。 -->
+          <!-- cirqueData 为参数改变, circle 的数据。当 selectLength === index + 2 时, 只渲染对应的 circle。 -->
+          <board v-show="selectLength <= index + 1" :ref="item.ref" :content="{name: item.name, num: item.num}" class="board"></board>
+          <cirque :graphic="item.name" v-show="selectLength >= index + 2" :cirqueData="cirqueData" :isUpdate="selectLength === index + 2 ? true : false"></cirque>
         </div>
       </div>
-      <b-map class="map" ref="map" @nodechange="nodechange" />
+      <b-map class="map" ref="map" :date="date" @nodechange="nodechange" />
       <div class="group">
-        <div class="item" v-for="(item, index) in boardList.slice(4)" :key="index">
-          <board v-show="selectLength === index + 1" :ref="item.ref" :content="{name: item.name, num: item.num}" class="board"></board>
-          <cirque v-show="selectLength >= index + 2" :cirqueData="cirqueData"></cirque>
+        <div class="item" v-for="(item, index) in boardList.slice(3)" :key="index">
+          <board v-show="selectLength <= index + 4" :ref="item.ref" :content="{name: item.name, num: item.num}" class="board"></board>
+          <cirque :graphic="item.name" v-show="selectLength >= index + 5" :cirqueData="cirqueData" :isUpdate="selectLength === index + 5 ? true : false"></cirque>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script type="text/ecmascript-6">
 import Cirque from 'components/shareCirque'
 import Board from 'components/business-board'
 import BMap from 'components/map'
 import objAddPercent from 'utils/objAddPercent'
 import {mapGetters, mapMutations} from 'vuex'
+Date.prototype.Format = function (fmt) {
+    var o = {
+        "M+": this.getMonth() + 1, //月份
+        "d+": this.getDate(), //日
+        "h+": this.getHours(), //小时
+        "m+": this.getMinutes(), //分
+        "s+": this.getSeconds(), //秒
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "S": this.getMilliseconds() //毫秒
+    };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+};
 
 export default {
   name: 'app',
   data() {
     return {
-      selectLength: 1,   // select 个数
+      total: null,
+      selectLength: null,   // select 个数
       cirqueData: null,
+      date :null,//当前时间
       update: false,
       boardList: [{
         ref: 'board1',
@@ -69,25 +88,41 @@ export default {
   },
   watch: {
     params: {                  
-      handler: async function(val) {
+      async handler (val) {
         const res = await this.$http.post('/dmp/api/LockHistory/CountLockUnWorksHistory', val)
         this.cirqueData = objAddPercent(res)
       },
       deep: true
     },
-    deviceNumLength() {       // 当前选择select 长度 和总数num   
+    'params.querytime'(v) {
+      var isreal = new Date()<v;//是否是实时
+      if(isreal) this.date = null;
+      else this.date = v;
+      if(this.$real==isreal) return;
+      if(isreal){
+        this.$Interval = setInterval(()=>{
+          if(this.cachenode) this.nodechange(this.cachenode,true);
+        },5000);
+      }
+      else window.clearInterval(this.$Interval);
+      this.$real = isreal;
+    },
+    deviceNumLength() {       // 当前选择select 长度 和总数num。环形赋值总数
       this.selectLength = this.deviceNumLength.selectLength
-      this.boardList[this.selectLength].num = this.deviceNumLength.num
+      if (this.selectLength <= 5) {
+        this.boardList[this.selectLength - 1].num = this.deviceNumLength.num
+      }
     }
   },
   computed: {
     ...mapGetters([
       'params',
-      'deviceNumLength'
+      'deviceNumLength',
+      'querytime'
     ])
   },
   mounted(){
-    setInterval(()=>{
+    this.$Interval = setInterval(()=>{
       if(this.cachenode) this.nodechange(this.cachenode,true);
       },5000);
     this.getconfig = this.$http.get('dmp/api/Config');
@@ -95,6 +130,9 @@ export default {
       this.config = config;
     });
 
+    this.$bus.$on('totalDevice', (total) => {
+      this.total = total
+    })
   },
   destroyed(){
     window.onresize=null;
@@ -133,6 +171,10 @@ export default {
       if(!this.config) await this.getconfig;
     },
     async Flush(nodedata,isInterval){
+      if(this.date)
+        nodedata.time = this.date;
+      else
+        nodedata.time = null;
       var httpresult = await this.$http.post('dmp/api/Map/TotalCount', nodedata);
       if(this.cachenode!=nodedata) return;//节点改变
       if(this.$refs.map.getNum(0)!=httpresult.lockRecord||this.$refs.map.getNum(1)!=httpresult.chargeCount
