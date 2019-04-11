@@ -1,7 +1,7 @@
 <template>
   <div class="side-bar" ref="wrapper">
     <div class="tree" :class="hideSideBar ? 'hideSideBar' : null">
-      <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+      <el-tree :data="list" :props="defaultProps" @node-click="handleNodeClick" node-key="id" :default-expanded-keys="[1]"></el-tree>
     </div>
   </div>
 </template>
@@ -11,7 +11,7 @@
     data() {
       return {
         hideSideBar: false,
-        data: [],
+        list: [],
         defaultProps: {
           children: 'children',
           label: 'label'
@@ -26,16 +26,17 @@
       const menus = res.apps[0].menus;
       const codes = menus.map(m=>m.menuCode);
       let allcodes = [{
+          id: 0,
           label: '1.0 锁生命周期管理',
           code : 'dmp_01',
           children: [{
-            label: '1.1生命驾驶舱',code : 'dmp_01_01'
+            id: 1, label: '1.1生命驾驶舱',code : 'dmp_01_01'
           }, {
-            label: '1.2实时告警',code : 'dmp_01_02'
+            id: 2, label: '1.2实时告警',code : 'dmp_01_02'
           }, {
-            label: '1.3设备维修',code : 'dmp_01_03'
+            id: 3, label: '1.3设备维修',code : 'dmp_01_03'
           }, {
-            label: '1.4设备运维（待）',code : 'dmp_01_03'
+            id: 4,label: '1.4设备运维（待）',code : 'dmp_01_03'
           }]
         },
         // {
@@ -77,23 +78,28 @@
         // allcodes.forEach(m1=>{
         //   m1.children=m1.children.filter(m2=>m2.code&&codes.indexOf(m2.code)!=-1);
         // })
-        this.data.push(...allcodes);
+        this.list.push(...allcodes);
     },
     methods: {
       handleNodeClick(data) {
-        
+        if (data.id === 1) {
+
+        }
       },
     },
   };
 </script>
 
-<style scoped lang="stylus">
+<style lang="stylus">
   @import '~styles/variable.styl'
+  .el-tree-node__children > .el-tree-node
+    &:nth-of-type(1)
+      color $color-active
+
   .hideSideBar
     width 0!important
     overflow hidden
     margin-right 0!important
-    
   .side-bar
     margin-top 4px 
     display flex

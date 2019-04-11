@@ -16,7 +16,7 @@
         <div class="cirque-wrapper">
           <cirque class="cirque" :cirqueInfo="item.cirqueInfo" :isSecond="item.value === 1 ? true : false"></cirque>
           <div class="cirque-label" v-show="item.value === 1">
-            <p>{{item.options[1].label}}</p>
+            <p>{{item.options[1].label}} {{item.options[1].num}}</p>
             <canvas ref="label" width="160" height="100"></canvas>
           </div>
           <div class="info">
@@ -130,9 +130,9 @@ export default {
       for (let i=0; i<=7; i++) {
         label = this.$refs.label[i].getContext('2d')
         if (i === 4) {  // 数据异常
-          label.beginPath(); label.moveTo(90, 40); label.lineTo(105, 30); label.lineTo(260, 30); label.strokeStyle="#7CCCEF"; label.stroke()
+          label.beginPath(); label.moveTo(90, 40); label.lineTo(105, 30); label.strokeStyle="#7CCCEF"; label.stroke()
         } else {
-          label.beginPath(); label.moveTo(90, 40); label.lineTo(105, 30); label.lineTo(145, 30); label.strokeStyle="#7CCCEF"; label.stroke()
+          label.beginPath(); label.moveTo(90, 40); label.lineTo(105, 30); label.strokeStyle="#7CCCEF"; label.stroke()
         }
       }
     }
@@ -195,7 +195,9 @@ export default {
               left 128px
               top -9px
               white-space nowrap
+              padding-bottom 6px
               font-size $font-smaller
+              border-bottom 1px solid #7CCCEF
             canvas
               position absolute
               top -20px

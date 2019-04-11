@@ -20,17 +20,20 @@ export default {
       if (this.isSecond === true) {
         this.list = [{
           value: this.cirqueInfo.falseStatusNums,
-          percent: this.cirqueInfo.falseStatusNumsPercent
+          percent: this.cirqueInfo.falseStatusNumsPercent,
+          itemStyle: {color: this.cirqueInfo.color}
         }, {
           value: this.cirqueInfo.trueStatusNums,
           percent: this.cirqueInfo.trueStatusNumsPercent,
-          label: {show: false}
+          label: {show: false},
+          itemStyle: {color: '#2D6D90'}
         }]
       } else {
         this.list = [{
-          value: 0,
+          value: 100,
           percent: '',
-          label: {show: false}
+          label: {show: false},
+          itemStyle: {color: '#2D6D90'}
         }]
       }
 
@@ -42,9 +45,10 @@ export default {
       name: null,
       num: null,
       list: [{                 // value 值表示圆环占的百分比面积
-        value: 0,
-        percent: '',
-        label: {show: false}
+        value: 100,
+        percent: '100%',
+        label: {show: false},
+        itemStyle: {color: '#2D6D90'}
       }]
     }
   },
@@ -55,12 +59,6 @@ export default {
     init() {
       const echarts = require("echarts")
       const chart = echarts.init(this.$refs.cirque)
-      let color
-      if (this.isSecond) {
-        color = [this.cirqueInfo.color, '#2D6D90']
-      } else {
-        color = ['#2D6D90']
-      }
       const option = {
         title: {
           text: ""
@@ -79,12 +77,13 @@ export default {
         },
         series: [
           {
-            type: "pie",
+            type: "sunburst",
             radius: ['70%', '100%'],  // [内圆环半径, 外圆半径]
-            color: color,
             data: this.list,
+            itemStyle: {borderWidth: 0},
             label: {
               position: "inside",
+              rotate: 'tangential',
               color: '#000',
               fontWeight: 'bold',
               formatter: (params) => {

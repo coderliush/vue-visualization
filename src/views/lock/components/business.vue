@@ -15,14 +15,14 @@
           <!-- selectLength 等于当前的索引 index 加2时，显示circle。selectLength 大于 index 时, 显示到下级的 circle，本级同样显示。 -->
           <!-- cirqueData 为参数改变, circle 的数据。当 selectLength === index + 2 时, 只渲染对应的 circle。 -->
           <board v-show="selectLength <= index + 1" :ref="item.ref" :content="{name: item.name, num: item.num}" class="board"></board>
-          <cirque :graphic="item.name" v-show="selectLength >= index + 2" :cirqueData="cirqueData" :isUpdate="selectLength === index + 2 ? true : false"></cirque>
+          <cirque :graphic="item.name" v-show="selectLength >= index + 2" :cirqueData="cirqueList[index]"></cirque>
         </div>
       </div>
       <b-map class="map" ref="map" :date="date" @nodechange="nodechange" />
       <div class="group">
         <div class="item" v-for="(item, index) in boardList.slice(3)" :key="index">
           <board v-show="selectLength <= index + 4" :ref="item.ref" :content="{name: item.name, num: item.num}" class="board"></board>
-          <cirque :graphic="item.name" v-show="selectLength >= index + 5" :cirqueData="cirqueData" :isUpdate="selectLength === index + 5 ? true : false"></cirque>
+          <cirque :graphic="item.name" v-show="selectLength >= index + 5" :cirqueData="cirqueList[index + 3]"></cirque>
         </div>
       </div>
     </div>
@@ -56,7 +56,7 @@ export default {
     return {
       total: null,
       selectLength: null,   // select 个数
-      cirqueData: null,
+      cirqueList: [],
       date :null,//当前时间
       update: false,
       boardList: [{
@@ -88,9 +88,9 @@ export default {
   },
   watch: {
     params: {                  
-      async handler (val) {
-        const res = await this.$http.post('/dmp/api/LockHistory/CountLockUnWorksHistory', val)
-        this.cirqueData = objAddPercent(res)
+      async handler (query) {
+        const res = await this.$http.post('/dmp/api/LockHistory/CountLockUnWorksHistory', query)
+        this.cirqueList.splice(this.selectLength - 2, 1, objAddPercent(res))   // 6 个圆环数据的数组
       },
       deep: true
     },

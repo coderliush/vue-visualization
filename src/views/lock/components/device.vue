@@ -122,7 +122,7 @@ export default {
   },
   watch: {
     params: {
-      async handler(obj) {
+      async handler() {
         this.init()
       },
       deep: true
@@ -142,7 +142,7 @@ export default {
         this.device.num = deviceOptions.length
         this.device.options = [{name: '全部', id: 0}, ...deviceOptions]
       } else {
-        const res = await this.$http.post('/dmp/api/LockHistory/CountLockUnWorksHistory', this.params) 
+        const res = await this.$http.post('/dmp/api/LockHistory/CountLockUnWorksHistory', {...this.params, hardversion: ''}) 
         this.deviceCirqueData = objAddPercent(res)
       }
 

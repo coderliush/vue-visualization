@@ -63,8 +63,15 @@
   background #0A1A29!important
 
 .el-tree-node__content
-  height 40px
-  background #0573A4!important
+    height 40px
+    background #0573A4!important
+
+.el-tree-node__label
+  margin-left 20px
+  &:before
+    display inline-block
+    width 15px
+    content url(../assets/icon-lock.png)
 
 .el-tree-node__label
   font-size 16px!important
@@ -77,8 +84,19 @@
 .el-tree-node__expand-icon.expanded
   transform rotate(90deg)!important
 
-.treeitem:nth-child(1)
-  color red!important
+.el-tree-node__children .el-tree-node__label
+  margin-left 10px!important
+  &:before
+    display inline-block
+    width 20px
+    overflow hidden
+    position relative
+    top 4px
+    content url(../assets/icon-child-line.png)
+
+.el-tree-node__children .el-tree-node__content
+  padding-left 13px!important
+  background #1B405B!important
 
 // ------------------------------------  日期  ---------------------------------------
 .el-picker-panel .el-input__inner, .el-date-editor .el-input__inner
@@ -109,9 +127,15 @@
   background #0C2136!important             
   color #A4D1DC!important
   border 1px solid #3986B0!important
+  border-left 0!important
+  &:nth-of-type(1)
+    border-left 1px solid #3986B0!important
 
 .el-table--enable-row-transition .el-table__body td
+  border-right 1px solid #3986B0!important
   border-bottom 1px solid #3986B0!important
+  &:nth-of-type(1)
+    border-left 1px solid #3986B0!important
 
 .el-table tr
   background #103045!important             
@@ -125,9 +149,16 @@
   color red!important
   &:hover
     background red!important
-
+    
 .el-table--enable-row-hover .el-table__body tr:hover>td
   background none!important
+
+.el-table__empty-block
+  background #103045!important
+  color #a4d1dc !important
+  border-left 1px solid #3986B0!important
+  border-right 1px solid #3986B0!important
+  border-bottom 1px solid #3986B0!important
 
 // ------------------------------------------  分页 -------------------------------------------
 .el-pagination__total, .el-pagination__jump
@@ -147,3 +178,5 @@
   height 20px!important
   margin 0 4px!important
 
+.btn-next
+  padding-left 6px!important

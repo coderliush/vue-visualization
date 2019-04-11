@@ -51,6 +51,7 @@ export default {
     components: {},
     data() {
       return {
+        key: 'secretKey',
         loginForm: {
           username: "",
           password: ""
@@ -86,13 +87,12 @@ export default {
         this.setRap()
       }
 
-      let key = 'key'
       if (localStorage.getItem('isChecked') === 'true') {
         this.isChecked = true
         this.passwordType = 'password'
         this.loginForm = JSON.parse(localStorage.getItem('loginFormStorge'))
-        this.loginForm.username = decrypt(this.loginForm.username, key)
-        this.loginForm.password = decrypt(this.loginForm.password, key)
+        // this.loginForm.username = decrypt(this.loginForm.username, this.key)
+        this.loginForm.password = decrypt(this.loginForm.password, this.key)
       } else {
         this.isChecked = false
         this.loginForm = {
@@ -157,11 +157,10 @@ export default {
         }
       },
       rememberPsd() {
-        let key = 'key'
         if (this.isChecked) {
           localStorage.setItem('isChecked', true)
-          this.loginForm.username = encrypt(this.loginForm.username, key)    
-          this.loginForm.password = encrypt(this.loginForm.password, key)    
+          // this.loginForm.username = encrypt(this.loginForm.username, this.key)    
+          this.loginForm.password = encrypt(this.loginForm.password, this.key)    
           localStorage.setItem('loginFormStorge', JSON.stringify(this.loginForm))
         } else {
           localStorage.setItem('isChecked', false)

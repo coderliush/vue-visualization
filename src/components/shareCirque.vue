@@ -1,22 +1,6 @@
 <template>
   <div class="cirque-wrapper">
     <div class="label">
-      <!-- <p class="register">未注册 {{cirqueData.unRegisters}}</p>
-      <p class="install">未安装 {{cirqueData.unInstalls}}</p>
-      <p class="check">未验收 {{cirqueData.unAccepts}}</p>
-      <p class="cancel">注销 {{cirqueData.cancels}}</p>
-      <p class="scrap">报废 {{cirqueData.dumpings}}</p>
-      <p class="service">维修 {{cirqueData.repairs}}</p>
-      <p class="offline">离线 {{cirqueData.offlines}}</p> -->
-
-      <!-- <p class="register">未注册 {{isUpdate && cirqueData && cirqueData.unRegisters}}</p>
-      <p class="install">未安装 {{isUpdate && cirqueData &&  cirqueData.unInstalls}}</p>
-      <p class="check">未验收 {{isUpdate && cirqueData && cirqueData.unAccepts}}</p>
-      <p class="cancel">注销 {{isUpdate && cirqueData && cirqueData.cancels}}</p>
-      <p class="scrap">报废 {{isUpdate && cirqueData && cirqueData.dumpings}}</p>
-      <p class="service">维修 {{isUpdate && cirqueData && cirqueData.repairs}}</p>
-      <p class="offline">离线 {{isUpdate && cirqueData && cirqueData.offlines}}</p> -->
-
       <p class="register">未注册 {{cirqueData && cirqueData.unRegisters}}</p>
       <p class="install">未安装 {{cirqueData &&  cirqueData.unInstalls}}</p>
       <p class="check">未验收 {{cirqueData && cirqueData.unAccepts}}</p>
@@ -47,10 +31,6 @@ export default {
     graphic: {
       type: String
     },
-    isUpdate: {    // 默认更新
-      type: Boolean,
-      default: true
-    }
   },
   watch: {
     cirqueData() {
@@ -71,12 +51,13 @@ export default {
           }
         }
       })
-      if (this.isUpdate !== false) {this.init()}
+      this.init()
     }
   },
   data() {
     return {
       // 圆环图顺序: 未安装, 未验收, 注销, 报废, 维修, 离线, 未注册
+      count: [],
       order: ['unInstallsPercent', 'unAcceptsPercent', 'cancelsPercent', 'dumpingsPercent', 'repairsPercent', 'offlinesPercent', 'unRegistersPercent'],
       color: ['#7ABC12', '#1DA8FB', '#E7654B', '#979994', '#A26337', '#FDAE0B', '#FF67BB'], 
       list: [{
@@ -147,9 +128,7 @@ export default {
                 return params.data.percent
               }
             },
-            itemStyle: {
-              borderWidth: 0
-            },
+            itemStyle: {borderWidth: 0},
             radius: ['45%', '67%'],
             animation: false
           }

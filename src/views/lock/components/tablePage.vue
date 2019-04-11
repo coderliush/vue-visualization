@@ -73,6 +73,8 @@
 
     <div class="pageGroup">
       <el-pagination
+        prev-text="上一页"
+        next-text="下一页"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
@@ -192,4 +194,5 @@ export default {
         padding 0 20px
         color #fff!important
         background #0375A7
+        border none
 </style>
