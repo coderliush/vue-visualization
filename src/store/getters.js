@@ -2,7 +2,7 @@ export const ratio = state => state.ratio
 
 export const params = state => state.params
 
-export const deviceNumLength = state => state.deviceNumLength
+export const numLength = state => state.numLength
 
 export const querytime = state => {
   let date = state.params.querytime

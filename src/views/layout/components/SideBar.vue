@@ -106,7 +106,7 @@
     flex-direction column
     font-size $font-small
     .tree
-      width 268px
+      // width 268px
       margin-right 10px
       height 100%
       flex 1

@@ -14,20 +14,20 @@
         @focus="onFocus"
       >
       </el-date-picker>
-      <span>本部设备异常汇总：未注册</span>
-      <span class="active">{{nums.length !== 0 ? nums[0].falseStatusNums : null}}</span>
+      <span>本部设备异常汇总：</span>
+      <!-- <span class="active">{{nums.length !== 0 ? nums[0].falseStatusNums : null}}</span> -->
       <span>未安装</span>
       <span class="active">{{nums.length !== 0 ? nums[1].falseStatusNums : null}}</span>
       <span>未验收</span>
       <span class="active">{{nums.length !== 0 ? nums[2].falseStatusNums : null}}</span>
-      <span>离线</span>
-      <span class="active">{{ nums.length !== 0 ? nums[3].falseStatusNums : null}}</span>
+      <!-- <span>离线</span> -->
+      <!-- <span class="active">{{nums.length !== 0 ? nums[3].falseStatusNums : null}}</span> -->
       <span>维修</span>
       <span class="active">{{nums.length !== 0 ? nums[5].falseStatusNums : null}}</span>
-      <span>注销</span>
-      <span class="active">{{nums.length !== 0 ? nums[6].falseStatusNums : null}}</span>
-      <span>报废</span>
-      <span class="active">{{nums.length !== 0 ? nums[7].falseStatusNums : null}}</span>
+      <!-- <span>注销</span> -->
+      <!-- <span class="active">{{nums.length !== 0 ? nums[6].falseStatusNums : null}}</span> -->
+      <span>解绑</span>
+      <span class="active">解绑数目</span>
       <!-- 【<span class="red-dot"></span>】
       <span>生命过程录制</span> -->
     </div>
@@ -108,7 +108,7 @@ export default {
     .row
       display flex
       align-items center
-      margin 10px
+      margin 10px 0
       .dot
         margin-right 10px
         dot($color-active)

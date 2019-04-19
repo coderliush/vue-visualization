@@ -10,8 +10,12 @@ const mutations = {
     state.params.id = nodeData.id
     state.params.type = nodeData.type
   },
-  [types.SET_NUM_INDEX](state, deviceNumLength) {
-    state.deviceNumLength = deviceNumLength
+  [types.SET_ORG](state, org) {
+    state.numLength.org = org
+  },
+  [types.SET_DISTRICT](state, district) {
+    console.log('district', district)
+    state.numLength.district = district
   },
   [types.SET_DEVICE_TYPE](state, value) {
     state.params.devicetype = value

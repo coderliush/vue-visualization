@@ -52,7 +52,7 @@ export default {
       display flex
       color $color-white
       .side
-        width 266px
+        width 178px
         height 50px
         margin-bottom 10px
         padding 0 20px

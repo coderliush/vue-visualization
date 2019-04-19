@@ -195,7 +195,7 @@ export default {
     position relative
     top 30px
     left 30px
-    width 250px
-    height 250px
+    width 200px
+    height 200px
 
 </style>

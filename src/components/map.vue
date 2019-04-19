@@ -1,5 +1,9 @@
 <template>
   <div class="map">
+    <!-- <div class="title">
+      <div class="tab1" @click="tab1" :class="isActive ? 'active' : null"><p>运营</p></div>
+      <div class="tab2" @click="tab2" :class="!isActive ? 'active' : null"><p>行政区</p></div>
+    </div> -->
     <div class="main">
       <div class="container">
         <div class="select-wrapper">
@@ -36,7 +40,7 @@
             </el-select>
           </div>
 
-          <!-- <div class="select2" v-show="!isActive">
+          <div class="select2" v-show="!isActive">
             <el-select
               v-for="(districts,index) in districtselesctoptions"
               :key="index"
@@ -51,12 +55,12 @@
               >
               </el-option>
             </el-select>
-          </div> -->
+          </div>
 
         </div>
         <div class="header-wrapper"> 
           <div class="header">
-            <p style="max-width: 370px; margin: 0 auto;">{{cityname}}</p>
+            <p style="max-width: 334px; margin: 0 auto;">{{cityname}}</p>
             <!-- <p :class="cityname.length < 24 ? 'normal-class' : null">{{cityname.length > 26 ? cityname.substring(0, 26) : cityname}}</p><br/>
             <p>{{cityname.length > 26 ? cityname.substring(26) : null}}</p> -->
           </div>
@@ -70,7 +74,7 @@
           <p><span>设备数：</span><span style="color: #0ff">{{deviceCount|splitNum}}</span></p>
           <p><span>房间数 / 单元数：</span><span style="color: #0ff">{{roomcount|splitNum}} / {{cellcount|splitNum}}</span></p>
         </div>
-        <div class="footer">
+        <!-- <div class="footer">
           <div class="item" v-for="(item, index) in mapArr" :key="index">
             <img :src="item.url" alt>
             <div v-if="item.nums" style="position: relative;">
@@ -82,7 +86,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
         <div class="shade"></div>
       </div>
     </div>
@@ -93,11 +97,16 @@
 import axios from "axios"
 import villdgeUnit from './villdge-unit'
 import defaultImg from "../assets/no-pic.jpg"
-import {mapMutations} from 'vuex'
+import {mapMutations, mapGetters} from 'vuex'
 export default {
   name: "",
   components: {
     villdgeUnit
+  },
+  computed: {
+    ...mapGetters([
+      'numLength'
+    ])
   },
   filters:{
     splitNum(num){
@@ -110,10 +119,21 @@ export default {
       }
     }
   },
-  props :{
-    date : {
+  props: {
+    date: {
       type:Date,
       default:null
+    },
+    clickType: {
+      type: String
+    }
+  },
+  watch: {
+    clickType() {
+      if (this.clickType === 'tab1') { this.tab1() } else { this.tab2() }
+    },
+    date(v){
+      this.SelectChange(0,0);
     }
   },
   data() {
@@ -295,12 +315,14 @@ export default {
       // this.mapArr[0].num = httpresult.openCount;
       // this.mapArr[1].num = httpresult.chargeCount;
       const datalist = httpresult.cell;
-      this.setNumIndex({num: datalist.length, selectLength: 1});//地图左右存储个数和索引，当前是第一个 
+      this.setOrg({num: datalist.length, selectLength: 1});//地图左右存储个数和索引，当前是第一个 
+
       const rooms = httpresult.room;
       const roomcache = {};
       rooms.forEach(r=>roomcache[r.id]=r.count);
       //const datalist2 = httpresult.device;
       if(isleaf) villages = await getvillage;
+
       for(var i =0;i<datalist.length;i++){
         var node = datalist[i];
         node.cellCount = node.count;
@@ -341,10 +363,11 @@ export default {
         if(this.isActive&&id===0&&index===0){
            var rootnode = this.orgs.find(item=>item.parrentid==0);
            this.$emit('nodechange',{id:rootnode.id,type:this.isActive?1:2});
-        }
-        else
+
+           this.setOrg({num: 1, selectLength: 1});  //运营选择全部
+        }else 
           this.$emit('nodechange',{id:id,type:this.isActive?1:2});
-      }
+        }
 
       this.showtype=0;//显示地图
       this.imgurl = "";
@@ -372,6 +395,9 @@ export default {
             this.districtselescts.push(0);
             this.districtselesctoptions.push([{id:0,name:'全部'}, ...datalist]);
             this.InitMap("中国",datalist,null);//刷新地图
+
+            let selectLength = this.districtselesctoptions.length; 
+            this.setDistrict({selectLength: selectLength, num: this.districtselesctoptions[selectLength - 1].length - 1}) // 行政区初始化的 select 个数和options数目
           }
           return;
         }
@@ -381,6 +407,9 @@ export default {
           this.villageoptions = null;//小区选择清除
           this.districtselescts.push(0);
           this.districtselesctoptions.push([{id:0,name:'全部'}, ...datalist]);
+
+          let selectLength = this.districtselesctoptions.length
+          this.setDistrict({selectLength: selectLength, num: this.districtselesctoptions[selectLength - 1].length - 1}) // 选择行政区 select 个数和options数目
         }
         else{
           this.villageoptions = [{id:0,name:'全部'}, ...datalist];
@@ -405,7 +434,7 @@ export default {
             this.orgselescts.length = 0;
             this.orgselesctoptions.length = 0;
             this.orgselescts.push(0);
-            this.orgselesctoptions.push([{id:0,name:'全部'}, ...datalist]);
+            this.orgselesctoptions.push([{id:0,name:'全部'}, ...datalist]);   
             this.InitMap("中国",datalist,null);//刷新地图
           }
           return;
@@ -423,10 +452,10 @@ export default {
         }
         this.InitMap(node.name,datalist,node);//刷新地图
       }
-
+      
       let selectLength;// select 个数
-      if (this.villageoptions) { selectLength = 5 } else { selectLength = this.orgselesctoptions.length}
-      this.setNumIndex({num: datalist.length, selectLength});// 地图左右存储select option个数和select 的个数
+      if (this.villageoptions) { selectLength = 5 } else { selectLength = this.orgselesctoptions.length }
+      this.setOrg({num: datalist.length, selectLength});// 地图左右存储select option个数和select 的个数
     },
     async SelectVillage(id){
         let selectLength;// 选择'全部' selectLength 为5, 选择其他设置为6
@@ -467,7 +496,7 @@ export default {
 
           selectLength = 6
         }
-        this.setNumIndex({num: this.celloptions.length-1, selectLength})
+        this.setOrg({num: this.celloptions.length - 1, selectLength})
     },
     async SelectCell(id){
       let selectLength;// 选择'全部' selectLength 设置为6, 选择其他设置为7
@@ -475,7 +504,11 @@ export default {
         //this.$emit('nodechange',{id:this.villageselect[this.villageselect.length-1],type:1});//更新图表
         this.SelectVillage(this.villageselect);
         selectLength = 6
+        this.setOrg({num: this.orgselescts.length, selectLength})
       } else {
+        selectLength = 7
+        this.setOrg({num: this.orgselescts.length, selectLength})
+
         this.$emit('nodechange',{id:id,type:4});//更新图表
         var cell = this.celloptions.find(v=>v.id==id);
         this.cityname = cell.address;
@@ -491,10 +524,8 @@ export default {
         this.roomcount = await getroomcount;
         // this.deviceCount = httpresult.deviceCount;
         //this.celloptions = [{id:0,address:'全部'}, ...celloptions];//单元选择赋值
-        selectLength = 7
-      }
 
-      this.setNumIndex({num: this.orgselescts.length-1, selectLength})
+      }
     },
     wait (){
       return new Promise((reslove,reject)=>{
@@ -504,7 +535,6 @@ export default {
     init() {
       // this.orgs = []; //5级架构数据数据
       // this.districts = []; //行政区数据
-
       this.dimensions = null; //缓存计算的缩放级别
       this.myChart = null; //echart控件
       this.bMap = null; //当前百度地图控件
@@ -999,14 +1029,10 @@ export default {
       this.$isdistrict = isdistrict;
     },
     ...mapMutations({
-      setNumIndex: 'SET_NUM_INDEX'
+      setOrg: 'SET_ORG',
+      setDistrict:'SET_DISTRICT'
     })
   },
-  watch:{
-    date(v){
-      this.SelectChange(0,0);
-    }
-  }
 };
 </script>
 
@@ -1081,39 +1107,39 @@ export default {
 
 .title {
   display: flex;
-  // .tab1.active {
-  //   color: #fff;
-  //   background: url('../common/img/tab1-active.png') no-repeat
-  // }
-  // .tab2.active {
-  //   color: #fff;
-  //   background: url('../common/img/tab2-active.png') no-repeat
-  // }
+  .tab1.active {
+    color: #fff;
+    background: url('../assets//tab1-active.png') no-repeat
+  }
+  .tab2.active {
+    color: #fff;
+    background: url('../assets//tab2-active.png') no-repeat
+  }
 
-  // .tab1 {
-  //   width: 138px;
-  //   display: flex;
-  //   position: relative;
-  //   left: 26px;
-  //   align-items: center;
-  //   cursor: pointer;
-  //   background: url('../common/img/tab1.png') no-repeat
-  //   p {
-  //     padding: 10px 0 6px 47px
-  //   }
-  // }
+  .tab1 {
+    width: 138px;
+    display: flex;
+    position: relative;
+    left: 26px;
+    align-items: center;
+    cursor: pointer;
+    background: url('../assets//tab1.png') no-repeat
+    p {
+      padding: 10px 0 6px 47px
+    }
+  }
 
-  // .tab2 {
-  //   position: relative;
-  //   left: -7px;
-  //   width:350px;
-  //   cursor: pointer;
-  //   background: url('../common/img/tab2.png') no-repeat, url('../common/img/tab2-active.png') no-repeat;
-  //   p {
-  //     margin-top: 9px;
-  //     text-align: center;
-  //   }
-  // }
+  .tab2 {
+    position: relative;
+    left: -7px;
+    width:350px;
+    cursor: pointer;
+    background: url('../assets//tab2.png') no-repeat, url('../assets//tab2-active.png') no-repeat;
+    p {
+      margin-top: 9px;
+      text-align: center;
+    }
+  }
 }
 
 .main {
@@ -1144,7 +1170,7 @@ export default {
       font-size: 16px;
       z-index: 99;
       top: 56px;
-      left: 6px;
+      left: 10px;
       right: 0;
       margin: auto;
       text-align: center;

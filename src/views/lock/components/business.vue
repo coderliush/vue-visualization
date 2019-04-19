@@ -8,21 +8,37 @@
       <span class="active">{{total | splitNum}}</span>
     </div>
 
+    <div class="switch-wrapper">
+      <div class="switch">
+        <div class="tab1" @click="tab1" :class="isActive ? 'active' : null"><p>运营</p></div>
+        <div class="tab2" @click="tab2" :class="!isActive ? 'active' : null"><p>行政区</p></div>
+      </div>
+      <div class="input-wrapper">
+        <i class="el-icon-search"></i>
+        <el-input v-model="inputValue" class="input" type="text" placeholder="请输入单元地址"></el-input>
+        <el-button>搜索</el-button>
+      </div>
+    </div>
+
     <div class="map-wrapper">
       <div class="group">
-        <div class="item" v-for="(item, index) in boardList.slice(0, 3)" :key="index">
-          <!-- selectLength 小于等于 索引 index 的时候，显示board。 -->
-          <!-- selectLength 等于当前的索引 index 加2时，显示circle。selectLength 大于 index 时, 显示到下级的 circle，本级同样显示。 -->
-          <!-- cirqueData 为参数改变, circle 的数据。当 selectLength === index + 2 时, 只渲染对应的 circle。 -->
-          <board v-show="selectLength <= index + 1" :ref="item.ref" :content="{name: item.name, num: item.num}" class="board"></board>
-          <cirque :graphic="item.name" v-show="selectLength >= index + 2" :cirqueData="cirqueList[index]"></cirque>
+        <!-- <div class="item" v-for="(item, index) in districtList" :key="item.name" v-show="!isActive">
+          <board v-show="districtSelectLength <= index + 1" :content="{name: item.name, num: item.num}" class="board"></board>
+          <cirque :graphic="item.name" v-show="districtSelectLength >= index + 2" :cirqueData="disCirqueList[index]"></cirque>
+        </div> -->
+        <div class="item" v-for="(item, index) in boardList.slice(0, 3)" :key="index" v-show="isActive">
+          <!-- orgSelectLength 小于等于 索引 index 的时候，显示board。 -->
+          <!-- orgSelectLength 等于当前的索引 index 加2时，显示circle。orgSelectLength 大于 index 时, 显示到下级的 circle，本级同样显示。 -->
+          <!-- cirqueData 为参数改变, circle 的数据。当 orgSelectLength === index + 2 时, 只渲染对应的 circle。 -->
+          <board v-show="orgSelectLength <= index + 1" :content="{name: item.name, num: item.num}" class="board"></board>
+          <cirque :graphic="item.name" v-show="orgSelectLength >= index + 2" :cirqueData="cirqueList[index]"></cirque>
         </div>
       </div>
-      <b-map class="map" ref="map" :date="date" @nodechange="nodechange" />
+      <b-map class="map" ref="map" :date="date" @nodechange="nodechange" :clickType="clickType" />
       <div class="group">
-        <div class="item" v-for="(item, index) in boardList.slice(3)" :key="index">
-          <board v-show="selectLength <= index + 4" :ref="item.ref" :content="{name: item.name, num: item.num}" class="board"></board>
-          <cirque :graphic="item.name" v-show="selectLength >= index + 5" :cirqueData="cirqueList[index + 3]"></cirque>
+        <div class="item" v-for="(item, index) in boardList.slice(3)" :key="index" v-show="isActive">
+          <board v-show="orgSelectLength <= index + 4" :content="{name: item.name, num: item.num}" class="board"></board>
+          <cirque :graphic="item.name" v-show="orgSelectLength >= index + 5" :cirqueData="cirqueList[index + 3]"></cirque>
         </div>
       </div>
     </div>
@@ -54,33 +70,42 @@ export default {
   name: 'app',
   data() {
     return {
+      clickType: '',
+      inputValue: '',
+      isActive: true,   // 默认组织架构
       total: null,
-      selectLength: null,   // select 个数
+      orgSelectLength: null,   // 组织架构 select 个数
+      districtSelectLength: null, // 行政区 select 个数
       cirqueList: [],
+      disCirqueList: [],
       date :null,//当前时间
       update: false,
+      districtList: [{
+        name: '行政区1', 
+        num: null
+      }, {
+        name: '行政区2', 
+        num: null
+      }, {
+        name: '行政区3',
+        num: null
+      }],
       boardList: [{
-        ref: 'board1',
         name: '省公司',
         num: null,
       }, {
-        ref: 'board2',
         name: '城市公司',
         num: null,
       }, {
-        ref: 'board3',
         name: '分公司',
         num: null,
       }, {
-        ref: 'board4',
         name: '服务中心',
         num: null,
       }, {
-        ref: 'board5',
         name: '小区',
         num: null,
       }, {
-        ref: 'board6',
         name: '单元',
         num: null,
       }]
@@ -88,9 +113,15 @@ export default {
   },
   watch: {
     params: {                  
-      async handler (query) {
-        const res = await this.$http.post('/dmp/api/LockHistory/CountLockUnWorksHistory', query)
-        this.cirqueList.splice(this.selectLength - 2, 1, objAddPercent(res))   // 6 个圆环数据的数组
+      async handler(query) {
+        const res = await this.$http.post('/dmp/api/LockHistory/CountLockUnWorksHistory', query);      
+        if (this.isActive) {
+          let cirqueIndex = this.orgSelectLength - 2
+          this.cirqueList.splice(cirqueIndex, 1, objAddPercent(res)) // 6 个圆环数据的数组
+        } else {     
+          let cirqueIndex = this.districtSelectLength - 2
+          this.disCirqueList.splice(cirqueIndex, 1, objAddPercent(res)) // 行政区圆环数据的数组      
+        }
       },
       deep: true
     },
@@ -107,17 +138,25 @@ export default {
       else window.clearInterval(this.$Interval);
       this.$real = isreal;
     },
-    deviceNumLength() {       // 当前选择select 长度 和总数num。环形赋值总数
-      this.selectLength = this.deviceNumLength.selectLength
-      if (this.selectLength <= 5) {
-        this.boardList[this.selectLength - 1].num = this.deviceNumLength.num
-      }
+    numLength: {       // 当前选择select 长度 和总数num。环形赋值总数
+      handler() {
+        if (this.isActive) {
+          this.orgSelectLength = this.numLength.org.selectLength
+          if (this.orgSelectLength !== 7) { // boardList 索引为0 -> 5
+            this.boardList[this.orgSelectLength - 1].num = this.numLength.org.num
+          }
+        } else {
+          this.districtSelectLength = this.numLength.district.selectLength
+          this.districtList[this.districtSelectLength - 1].num = this.numLength.district.num
+        }
+      },
+      deep: true
     }
   },
   computed: {
     ...mapGetters([
       'params',
-      'deviceNumLength',
+      'numLength',
       'querytime'
     ])
   },
@@ -188,6 +227,14 @@ export default {
       // this.$refs.map.mapArr[0].num= httpresult.lockRecord;
       // this.$refs.map.mapArr[1].num= httpresult.chargeCount;
     },
+    tab1() {
+      this.isActive = true
+      this.clickType = 'tab1'
+    },
+    tab2() {
+      this.isActive = false
+      this.clickType = 'tab2'
+    },
     ...mapMutations({
       setNodeData: 'SET_NODE_DATA'
     })
@@ -218,18 +265,64 @@ export default {
       .active 
         margin 0 20px 0 10px
         color $color-active
+    .switch-wrapper
+      display flex
+      padding-right 50px
+      justify-content space-between
+      .input-wrapper 
+        display flex
+        .el-input__inner
+          padding-left 20px
+        .el-icon-search:before
+          position relative
+          top 10px
+          left 26px
+          z-index 9
+        button 
+          background $bg-active
+          color $color-normal
+          border none
+          border-radius none
+      .switch
+        display flex
+        .tab1.active 
+          color #fff
+          background url('../../../assets/tab1-active.png') no-repeat
+        .tab2.active 
+          color #fff
+          background url('../../../assets/tab2-active.png') no-repeat
+        .tab1 
+          width 138px
+          display flex
+          position relative
+          left 26px
+          align-items center
+          cursor pointer
+          background url('../../../assets/tab1.png') no-repeat
+          p
+            padding: 0px 0 6px 47px
+        .tab2
+          position relative
+          left -7px
+          width 350px
+          cursor pointer
+          background url('../../../assets/tab2.png') no-repeat, url('../../../assets/tab2-active.png') no-repeat
+          p 
+            margin-top 9px
+            text-align center
+
     .map-wrapper
       display flex
       min-height 892px
       .group
-        width 336px
+        width 250px
         padding 20px 0
         .item
           width 100%
           padding 4px 10px
           text-align center
-        // .map
-        //   flex 1
+    .map
+      flex 1
 </style>
 
 

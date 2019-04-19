@@ -6,7 +6,7 @@ const state = {
     type: 1,
     id: 801,
   },
-  deviceNumLength: {num: null, selectLength: null},
+  numLength: {org: {}, district: {}},
   ratio: null,
 }
 
