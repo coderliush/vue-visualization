@@ -6,7 +6,7 @@
         <img class="right" src="../../../assets/menu.png" alt="" @click="close">
       </div>
       <div class="title">
-        <p>统一设备生命周期管理平台</p>
+        <p>生命驾驶舱管理平台</p>
       </div>
       <div class="info">
         <span>欢迎您，{{name}}</span>
@@ -52,7 +52,7 @@ export default {
       display flex
       color $color-white
       .side
-        width 178px
+        width 266px
         height 50px
         margin-bottom 10px
         padding 0 20px

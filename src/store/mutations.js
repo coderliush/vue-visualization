@@ -14,14 +14,31 @@ const mutations = {
     state.numLength.org = org
   },
   [types.SET_DISTRICT](state, district) {
-    console.log('district', district)
     state.numLength.district = district
   },
-  [types.SET_DEVICE_TYPE](state, value) {
-    state.params.devicetype = value
+  [types.SET_DEVICE](state, obj) {  // 设备类型
+    state.params.devicetype = obj.id
+    if (obj.name === '全部') {obj.name = '设备属性'}
+    state.text.deviceList.splice(0, 1, obj.name)
   },
-  [types.SET_HARD_VERSION](state, value) {
-    state.params.hardversion = value
+  [types.SET_HARD_VERSION](state, val) { // 固体版本
+    state.params.hardversion = val
+    if (val) {state.text.deviceList.splice(1, 1, val)} else {state.text.deviceList.splice(1, 1)}
+  },
+  [types.SET_ADDRESS](state, address) {
+    state.text.business.address = address
+  },
+  [types.SET_ORG_LIST](state, list) {
+    state.text.business.orgList = list.slice().length === 0 ? ['运营区域'] :  list.slice()  // 不修改 list, list.slice() 返回一个新数组
+  },
+  [types.SET_DISTRICT_LIST](state, list) {
+    state.text.business.districtList = list.slice().length === 0 ? ['行政区域'] : list.slice()
+  },
+  [types.SET_ACTIVE](state, str) {
+    state.text.business.active = str
+  },
+  [types.SET_LIFE](state, list) {
+    state.text.lifeList = list.slice()
   },
 }
 

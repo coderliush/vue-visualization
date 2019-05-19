@@ -7,10 +7,10 @@
             class="login-form"
             label-position="left"
         >
-          <!-- <div class="title"><img src="../common/img/login/icon.png"><span>青客物联网监控面板</span></div> -->
+          <div class="title"><img src="../../assets/login/icon.png"><span>统一设备管理平台</span></div>
           <p class="warn" v-show="showWarn">*{{this.message}}</p>
           <el-form-item prop="username" class="group">
-            <!-- <img src="../common/img/login/user.png" alt=""> -->
+            <img src="../../assets/login/user.png" alt="">
             <el-input
                 v-model="loginForm.username"
                 placeholder="请输入用户名"
@@ -20,7 +20,7 @@
             />
           </el-form-item>
           <el-form-item prop="password" class="group">
-            <!-- <img src="../common/img/login/psd.png" alt=""> -->
+            <img src="../../assets/login/psd.png" alt="">
             <el-input
                 :type="passwordType"
                 v-model="loginForm.password"
@@ -40,7 +40,7 @@
           >登录</el-button>
           <el-checkbox label="记住登录状态" v-model="isChecked"></el-checkbox>
         </el-form>
-        <!-- <img class="ball" src="../common/img/login/ball.png" alt=""> -->
+        <img class="ball" src="../../assets/login/ball.png" alt="">
     </div>
 </template>
 
@@ -183,11 +183,14 @@ export default {
   to
     transform rotate(360deg)
 
+.el-form-item .el-input__inner 
+  padding-left 40px!important
+
 .ball 
   animation rotate 30s linear infinite
 
 .login-container
-  // background url('../common/img/login/bg.png') no-repeat
+  background url('../../assets/login/bg.png') no-repeat
   background-size cover
   >img 
     position relative
@@ -203,9 +206,12 @@ export default {
     top 0
     bottom 120px
     margin auto
-    // background url('../common/img/login/form-bg.png') no-repeat
+    background url('../../assets/login/form-bg.png') no-repeat
     .title 
       margin-bottom 50px
+      img 
+        position relative
+        top 5px
       span 
         display inline-block
         margin-left 15px
@@ -225,7 +231,7 @@ export default {
         z-index 9
     .botton
       font-size 20px
-      // background url('../common/img/login/button.png') 100% 100%  no-repeat
+      background url('../../assets/login/button.png') 100% 100%  no-repeat
       font-weight bold
       background-size 100%
       letter-spacing 10px

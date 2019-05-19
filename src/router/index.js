@@ -13,6 +13,12 @@ const Layout = (resolve) => {
   })
 }
 
+const repairDetail = (resolve) => {
+  import('views/repair-detail/index').then((module) => {
+    resolve(module)
+  })
+}
+
 Vue.use(Router)
 
 export default new Router({
@@ -26,6 +32,11 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/repair-detail',
+      name: 'repairDetail',
+      component: repairDetail
     }
   ]
 })

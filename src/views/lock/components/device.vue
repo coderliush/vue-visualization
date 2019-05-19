@@ -2,19 +2,20 @@
   <div class="device">
     <div class="title">
       <span class="dot"></span>
-      <span>设备异常检索（异常占比）</span>
+      <span>设备属性检索</span>
+    </div>
+    <div class="des">
       <span class="active">{{querytime}}</span>
-      <span>设备总计</span>
-      <span class="active">{{total | splitNum}}</span>
+      <span class="active">【{{this.area}}】</span>
     </div>
 
     <div class="device-container">
       <div class="item">
-        <el-select v-model="device.id" class="select"  @change="onDevice()" placeholder="设备类型">
+        <el-select v-model="device.id" class="select"  @change="onDevice" placeholder="全部">
           <el-option v-for="item in device.options" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
         <div class="graph">
-          <Cirque class="device-selected" v-show="showDeviceCircle" :cirqueData="deviceCirqueData"></Cirque>
+          <Cirque :graphic="text.deviceList[0]" class="device-selected" v-show="showDeviceCircle" :cirqueData="deviceCirqueData"></Cirque>
           <div class="device-no-selected" v-show="!showDeviceCircle">
             <img :src="device.src" alt="">
             <div class="content">
@@ -25,7 +26,7 @@
       </div>
 
       <div class="item">
-        <el-select v-model="provider.value" class="select" placeholder="供应商">
+        <el-select v-model="provider.value" class="select" placeholder="全部" disabled>
           <el-option :value="1"></el-option>
         </el-select>
         <div class="graph">
@@ -40,11 +41,11 @@
       </div>
 
       <div class="item">
-        <el-select v-model="hardVersion.value" class="select"  @change="onHardVersion()" placeholder="固体版本">
+        <el-select v-model="hardVersion.value" class="select"  @change="onHardVersion" placeholder="全部">
           <el-option v-for="item in hardVersion.options" :key="item" :label="item" :value="item"></el-option>
         </el-select>
         <div class="graph">
-          <Cirque class="device-selected" v-show="showHardVersionCircle" :cirqueData="HardVersionCirqueData"></Cirque>
+          <Cirque :graphic="text.deviceList[1]" class="device-selected" v-show="showHardVersionCircle" :cirqueData="HardVersionCirqueData"></Cirque>
           <div class="device-no-selected" v-show="!showHardVersionCircle" >
             <img :src="hardVersion.src" alt="">
             <div class="content">
@@ -55,7 +56,7 @@
       </div>
 
       <div class="item">
-        <el-select v-model="batch.value" class="select" placeholder="批次号">
+        <el-select v-model="batch.value" class="select" placeholder="全部" disabled>
           <el-option :value="1"></el-option>
         </el-select>
         <div class="graph">
@@ -79,8 +80,36 @@ import objAddPercent from 'utils/objAddPercent'
 import { mapMutations, mapGetters } from 'vuex'
 export default {
   name: '',
+  computed: {
+    ...mapGetters([
+      'params',
+      'querytime',
+      'text'
+    ])
+  },
+  watch: {
+    params: {
+      async handler() {
+        this.getData()
+      },
+      deep: true
+    },
+    text: {
+      handler() {
+        if (this.text.business.active === 'org') {
+          this.area = this.text.business.orgList.join(' — ') 
+        } else if (this.text.business.active === 'district') {
+          this.area = this.text.business.districtList.join(' — ')
+        } else if (this.text.business.active === 'address') {
+          this.area = this.text.business.address
+        }
+      },
+      deep: true
+    }
+  },
   data() {
     return {
+      area: '区域',
       total: null,
       showDeviceCircle: false,
       showHardVersionCircle: false,
@@ -95,11 +124,11 @@ export default {
         options: {value: 1, label: '设备类型'}
       },
       provider: {
-        name: '供应商',
+        name: '暂无数据',
         num: null,
         value: null,
         options: [],
-        src: require('../../../assets/supplier.png'),
+        src: require('../../../assets/no-data.png'),
         options: {value: 1, label: '设备类型'}
       },
       hardVersion: {
@@ -111,31 +140,17 @@ export default {
         options: {value: 1, label: '设备类型'}
       },
       batch: {
-        name: '批次号',
+        name: '暂无数据',
         num: null,
         value: null,
         options: [],
-        src: require('../../../assets/batch.png'),
+        src: require('../../../assets/no-data.png'),
         options: {value: 1, label: '设备类型'}
       }
     }
   },
-  watch: {
-    params: {
-      async handler() {
-        this.init()
-      },
-      deep: true
-    },
-  },
-  computed: {
-    ...mapGetters([
-      'params',
-      'querytime'
-    ])
-  },
   methods: {
-    async init() {
+    async getData() {
       // 设备类型和固体版本两种数据。不显示圆环图，调获取下拉框的接口, 否则调获取圆环图数据的接口。
       if (this.showDeviceCircle === false) {
         const deviceOptions = await this.$http.get('/dmp/api/LockHistory/GetLockTypeHistory')
@@ -143,7 +158,8 @@ export default {
         this.device.options = [{name: '全部', id: 0}, ...deviceOptions]
       } else {
         const res = await this.$http.post('/dmp/api/LockHistory/CountLockUnWorksHistory', {...this.params, hardversion: ''}) 
-        this.deviceCirqueData = objAddPercent(res)
+        const total = await this.$http.post('/dmp/api/LockHistory/GetLockCountHistory', {...this.params})
+        this.deviceCirqueData = objAddPercent({...res, total})
       }
 
       if (this.showHardVersionCircle === false) {
@@ -155,21 +171,27 @@ export default {
         this.HardVersionCirqueData = objAddPercent(res)
       }
     },
-    onDevice() {
-      if (this.device.id === 0) { this.showDeviceCircle = false } else { this.showDeviceCircle = true }
-      this.setDeviceType(this.device.id)
-    },
-    onHardVersion() {
-      if (this.hardVersion.value === '') { this.showHardVersionCircle = false } else { this.showHardVersionCircle = true }
+    onDevice(val) {
+      if (val) { this.showDeviceCircle = true } else { this.showDeviceCircle = false }
+      this.showHardVersionCircle = false
+      let selected = this.device.options.find(item => item.id === val)
+      this.setDevice(selected)
+
+      this.hardVersion.value = ''
       this.setHardVersion(this.hardVersion.value)
     },
+    onHardVersion(val) {
+      if (val !== '全部') { this.showHardVersionCircle = true } else { this.showHardVersionCircle = false }
+      let selected = this.hardVersion.options.find(item => item === val)
+      this.setHardVersion(selected)
+    },
     ...mapMutations({
-      setDeviceType: 'SET_DEVICE_TYPE',
+      setDevice: 'SET_DEVICE',
       setHardVersion: 'SET_HARD_VERSION'
     })
   },
   async mounted() {
-    this.init()
+    this.getData()
     this.$bus.$on('totalDevice', (total) => {
       this.total = total
     })
@@ -191,21 +213,28 @@ export default {
     .title
       display flex
       align-items center
-      padding 20px 10px
+      padding 20px 10px 10px 
       .dot
         margin-right 10px
         dot($color-active)
+    .des
+      font-size $font-small
+      padding 0 19px 10px
       .active 
-        margin 0 20px 0 10px
+        margin 0 0 0 10px
         color $color-active
     .device-container
-      display flex
+      width 1610px
+      margin 0 auto
       padding 0 96px
+      display flex
       .item 
         width 25%
         text-align center
         .select
-          width 120px!important
+          width 140px!important
+          position relative 
+          z-index 9
         .graph
           .device-selected
             position relative
@@ -214,10 +243,11 @@ export default {
           .device-no-selected
             margin-top 20px
             img
-              width 45%
+              width 158px
             .content
               position relative
               top -70px
+              font-size $font-small
           .cirque
             width 100%
             height 300px

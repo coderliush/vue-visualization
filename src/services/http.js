@@ -99,13 +99,13 @@ var http = {
                 localStorage.setItem("_token", value);
             }
             this._token = value;
-        }
+        },
     },
     setheader(token) {
         this.header.Authorization = "Bearer " + token;
     },
     getuser(){
-        if(!this.$getuser) this.$getuser=this.get('/dmp/api/Account/GetUser');
+        if(!this.$getuser) this.$getuser=this.get('/dmp/api/Account/GetUser', { headers: this.header } );
         return this.$getuser;
     },
     async get(url) {
@@ -119,7 +119,15 @@ var http = {
         // block.block();
         const res = await axios.post(url, data, { headers: this.header }).catch(res => res);
         // block.unblock();
-        return handleResult(res);
+        return handleResult(res)
+    },
+    async download(url, data) {
+        // block.block();
+        const res = await axios.post(url, data, { headers: this.header, responseType: 'blob',onDownloadProgress:(progressEvent)=>{
+            console.log(progressEvent.loaded/progressEvent.total)
+        }}).catch(res => res);
+        // block.unblock();
+        return handleResult(res)
     },
     async awaitTasks(tasks) {
         if (!tasks) return;

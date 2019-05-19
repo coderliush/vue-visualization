@@ -1,13 +1,9 @@
 <template>
   <div class="map">
-    <!-- <div class="title">
-      <div class="tab1" @click="tab1" :class="isActive ? 'active' : null"><p>运营</p></div>
-      <div class="tab2" @click="tab2" :class="!isActive ? 'active' : null"><p>行政区</p></div>
-    </div> -->
     <div class="main">
       <div class="container">
         <div class="select-wrapper">
-          <div class="select1" v-show="isActive">
+          <div class="select1" v-show="isOrg">
             <el-select
               v-for="(orgs,index) in orgselesctoptions"
               :key="index"
@@ -39,8 +35,7 @@
                 </el-option>
             </el-select>
           </div>
-
-          <div class="select2" v-show="!isActive">
+          <div class="select2" v-show="isDistrict">
             <el-select
               v-for="(districts,index) in districtselesctoptions"
               :key="index"
@@ -56,13 +51,16 @@
               </el-option>
             </el-select>
           </div>
-
+          <div class="input-wrapper" v-show="isAddress">
+            <i class="el-icon-search"></i>
+            <el-input v-model="inputValue" class="input" type="text" placeholder="请输入单元地址" :disabled="disabledInput"></el-input>
+            <el-button @click="searchAddress" v-show="!locking">搜索</el-button>
+            <el-button class="locking" @click="onLocking" v-show="locking">锁定</el-button>
+          </div>
         </div>
         <div class="header-wrapper"> 
           <div class="header">
-            <p style="max-width: 334px; margin: 0 auto;">{{cityname}}</p>
-            <!-- <p :class="cityname.length < 24 ? 'normal-class' : null">{{cityname.length > 26 ? cityname.substring(0, 26) : cityname}}</p><br/>
-            <p>{{cityname.length > 26 ? cityname.substring(26) : null}}</p> -->
+            <p style="max-width: 334px; margin: 0 auto;position: relative; top: -8px;">{{cityname}}</p>
           </div>
         </div>
         <div class="body" id="bodymap">
@@ -71,7 +69,7 @@
           <villdgeUnit :type="showtype" :vname="vname" :src="imgurl" v-show="showtype"></villdgeUnit>
         </div>
         <div class="count">
-          <p><span>设备数：</span><span style="color: #0ff">{{deviceCount|splitNum}}</span></p>
+          <p><span>锁数量：</span><span style="color: #0ff">{{deviceCount|splitNum}}</span></p>
           <p><span>房间数 / 单元数：</span><span style="color: #0ff">{{roomcount|splitNum}} / {{cellcount|splitNum}}</span></p>
         </div>
         <!-- <div class="footer">
@@ -94,6 +92,9 @@
 </template>
 
 <script type="text/ecmascript-6">
+// 房间数单元数：1. 前四级   /dmp/api/Org/MapPointCount， 累加 cell 和是单元数，累加 room 是房间数
+//              2. 小区    /dmp/api/GetImage/GetVillage，    房间数 /dmp/api/Cell/RoomCount
+//              3. 单元    /dmp/api/GetImage/GetCuc，单元数， 房间数  /dmp/api/Cell/RoomCount
 import axios from "axios"
 import villdgeUnit from './villdge-unit'
 import defaultImg from "../assets/no-pic.jpg"
@@ -105,7 +106,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'numLength'
+      'numLength',
+      'params'
     ])
   },
   filters:{
@@ -124,21 +126,21 @@ export default {
       type:Date,
       default:null
     },
-    clickType: {
-      type: String
-    }
-  },
-  watch: {
-    clickType() {
-      if (this.clickType === 'tab1') { this.tab1() } else { this.tab2() }
-    },
-    date(v){
-      this.SelectChange(0,0);
+    tabState: {
+      type: Object,
+      defaul: null
     }
   },
   data() {
     return {
-      isActive: true,
+      locking: false,
+      disabledInput: false,
+      inputValue: null,
+      isOrg: true,   // 默认运营
+      isDistrict: false,
+      isAddress: false,
+      orgList: [],  // select 选中的运营名字
+      disList: [],  // select 选中的行政区名字
       mapArr: [
         {
           name: '开门次数',
@@ -194,8 +196,8 @@ export default {
     };
   },
   async mounted() {
-    const getdistrict = this.$http.get(`/dmp/api/Map/Query?time=${this.date}`);
-    const getorg = this.$http.get(`/dmp/api/Org/Query?time=${this.date}`);
+    const getdistrict = this.$http.get(`/dmp/api/Map/Query?time=${this.params.querytime}`);
+    const getorg = this.$http.get(`/dmp/api/Org/Query?time=${this.params.querytime}`);
     this.districts = await getdistrict;
     // this.districtselesctoptions.push([{id:0,name:'全部'},...this.districts.filter(d=>{
     //   if(d.name=='上海市'){
@@ -219,6 +221,18 @@ export default {
     // setTimeout(() => this.init(), 300);
   },
   methods: {
+    onLocking() {
+      this.locking = false
+    },
+    searchAddress() {
+      this.disabledInput = true
+      this.locking = true
+      this.setAddress(this.inputValue)
+    },
+    async getTotal(params) {  //获取组织架构总数
+      const res = await this.$http.post('/dmp/api/Map/OrgCountsAllHistory', params)
+      this.$emit('totalNum', res)
+    },
     setTabNum(i,v){
       if(this.mapArr[i].nums.length===0){
         this.mapArr[i].nums.push(v);
@@ -233,7 +247,9 @@ export default {
     },
     //选择五级架构
     tab1() {
-      this.isActive = true;
+      this.isOrg = true
+      this.isDistrict = false
+      this.isAddress = false
       var index = 0;
       var selected =0 ;
       if(this.orgselescts.length){
@@ -244,7 +260,9 @@ export default {
     },
     //选择行政区
     tab2() {
-      this.isActive = false;
+      this.isOrg = false
+      this.isDistrict = true
+      this.isAddress = false
       var index = 0;
       var selected =0 ;
       if(this.districtselescts.length){
@@ -253,11 +271,18 @@ export default {
       }
       this.SelectChange(index,selected);
     },
-    //获取地图显示数据(行政区)
+    tab3() {
+      this.isOrg = false
+      this.isDistrict = false
+      this.isAddress = true
+      this.SelectChange(0, 0) // 显示全国地图
+    },
+    //获取地图显示数据(行政区)， 获取节点经纬度
     async getdatalist(id,isleaf,path){
       var getvillage = null,villages = null;
-      if(isleaf)  getvillage = this.$http.get(`/dmp/api/Map/QueryVillage/${id}?time=${this.date}`);
-      const httpresult = await this.$http.post('/dmp/api/Map/MapPointCount',{id:id,isleaf:isleaf,path:path,time:this.date});
+      if(isleaf)  getvillage = this.$http.get(`/dmp/api/Map/QueryVillage/${id}?time=${this.params.querytime}`);
+      const httpresult = await this.$http.post('/dmp/api/Map/MapPointCount',{id:id,isleaf:isleaf,path:path,time:this.params.querytime});
+
       // this.setTabNum(0,httpresult.openCount);
       // this.setTabNum(1,httpresult.chargeCount);
       // this.mapArr[0].num = httpresult.openCount;
@@ -305,17 +330,20 @@ export default {
       // },0);
       return showlist;
     },
-    //获取地图显示数据(五级架构)
+    //获取地图显示数据(五级架构), 运营下匹配节点经纬度
     async getorgdatalist(id,isleaf,path){
       var getvillage = null,villages = null;
-      if(isleaf)  getvillage = this.$http.get(`/dmp/api/Org/QueryVillage/${id}?time=${this.date}`);
-      const httpresult = await this.$http.post('/dmp/api/Org/MapPointCount',{id:id,isleaf:isleaf,path:path,time:this.date});
+      if(isleaf)  getvillage = this.$http.get(`/dmp/api/Org/QueryVillage/${id}?time=${this.params.querytime}`);
+      const httpresult = await this.$http.post('/dmp/api/Org/MapPointCount',{id:id,isleaf:isleaf,path:path,time:this.params.querytime});
       // this.setTabNum(0,httpresult.openCount);
       // this.setTabNum(1,httpresult.chargeCount);
       // this.mapArr[0].num = httpresult.openCount;
       // this.mapArr[1].num = httpresult.chargeCount;
       const datalist = httpresult.cell;
-      this.setOrg({num: datalist.length, selectLength: 1});//地图左右存储个数和索引，当前是第一个 
+
+      if (!this.numLength.org.selectLength) {   //切换tab, 保存原状态
+        this.setOrg({num: datalist.length, selectLength: 1});//地图左右存储个数和索引，当前是第一个 
+      }
 
       const rooms = httpresult.room;
       const roomcache = {};
@@ -354,19 +382,20 @@ export default {
     },
     //下拉选择事件
     async SelectChange(index, id) {
+      this.setNodeData({id, type: this.isOrg ? 1 : 2})
       // 前四个的下拉框 
       if(index&&!id){
-        if(this.isActive) this.$emit('nodechange',{id:this.orgselescts[index-1],type:1});
+        if(this.isOrg) this.$emit('nodechange',{id:this.orgselescts[index-1],type:1});
         else this.$emit('nodechange',{id:this.districtselescts[index-1],type:2});
       }
       else {
-        if(this.isActive&&id===0&&index===0){
+        if(this.isOrg&&id===0&&index===0){
            var rootnode = this.orgs.find(item=>item.parrentid==0);
-           this.$emit('nodechange',{id:rootnode.id,type:this.isActive?1:2});
+           this.$emit('nodechange',{id:rootnode.id,type:this.isOrg?1:2});
 
            this.setOrg({num: 1, selectLength: 1});  //运营选择全部
         }else 
-          this.$emit('nodechange',{id:id,type:this.isActive?1:2});
+          this.$emit('nodechange',{id:id,type:this.isOrg?1:2});
         }
 
       this.showtype=0;//显示地图
@@ -375,7 +404,11 @@ export default {
       this.villageselect = null;//清除小区选择
       this.cellselect = null;//清除单元选择
       this.celloptions = null;//清除单元选择
-      if (!this.isActive) {//行政区域
+      const params = { // 获取总数参数
+        type: 1,
+        time: this.params.querytime
+      }
+      if (this.isDistrict) {//行政区域
         this.districtselescts.length = index + 1;
         this.districtselesctoptions.length = index + 1;
         //const getdatalist = this.$http.post('/dmp/api/Map/CellCount',{id:0,isleaf:false});
@@ -386,7 +419,7 @@ export default {
             var datalist = await this.getdatalist(this.districtselescts[index-1],false,node.path);
             this.districtselescts[index]=0;
             this.districtselesctoptions[index]=[{id:0,name:'全部'}, ...datalist];
-            this.InitMap(node.name,datalist,node);//刷新地图
+            this.InitMap(node.name,datalist,node, {index, id});//刷新地图
           }
           else{
             var datalist = await this.getdatalist(0,false);
@@ -394,7 +427,7 @@ export default {
             this.districtselesctoptions.length = 0;
             this.districtselescts.push(0);
             this.districtselesctoptions.push([{id:0,name:'全部'}, ...datalist]);
-            this.InitMap("中国",datalist,null);//刷新地图
+            this.InitMap("中国",datalist,null, {index: null, id});//刷新地图
 
             let selectLength = this.districtselesctoptions.length; 
             this.setDistrict({selectLength: selectLength, num: this.districtselesctoptions[selectLength - 1].length - 1}) // 行政区初始化的 select 个数和options数目
@@ -415,7 +448,7 @@ export default {
           this.villageoptions = [{id:0,name:'全部'}, ...datalist];
           this.villageselect = 0;
         }
-        this.InitMap(node.name,datalist,node);//刷新地图
+        this.InitMap(node.name,datalist,node, {index, id});//刷新地图
       } else {
         this.orgselescts.length = index + 1;
         this.orgselesctoptions.length = index + 1;
@@ -426,7 +459,7 @@ export default {
             var datalist = await this.getorgdatalist(this.orgselescts[index-1],false,node.path);
             this.orgselescts[index]=0;
             this.orgselesctoptions[index]=[{id:0,name:'全部'}, ...datalist];
-            this.InitMap(node.name,datalist,node);//刷新地图
+            this.InitMap(node.name,datalist,node, {index, id});//刷新地图
           }
           else{
             var rootnode = this.orgs.find(item=>item.parrentid==0);
@@ -435,8 +468,12 @@ export default {
             this.orgselesctoptions.length = 0;
             this.orgselescts.push(0);
             this.orgselesctoptions.push([{id:0,name:'全部'}, ...datalist]);   
-            this.InitMap("中国",datalist,null);//刷新地图
+            this.InitMap("中国",datalist,null, {index: null, id});//刷新地图
           }
+          params.id = id
+          params.isleaf = false
+          params.path = '801,802' // 全部
+          this.getTotal(params) 
           return;
         }
         var node = this.orgs.find(item=>item.id==id);
@@ -450,12 +487,16 @@ export default {
           this.villageoptions = [{id:0,name:'全部'}, ...datalist];
           this.villageselect = 0;
         }
-        this.InitMap(node.name,datalist,node);//刷新地图
+        this.InitMap(node.name,datalist,node, {index, id});//刷新地图
       }
       
       let selectLength;// select 个数
       if (this.villageoptions) { selectLength = 5 } else { selectLength = this.orgselesctoptions.length }
       this.setOrg({num: datalist.length, selectLength});// 地图左右存储select option个数和select 的个数
+      params.id = id
+      params.path = node.path
+      index === 3 ? params.isleaf = true : params.isleaf = false
+      this.getTotal(params)
     },
     async SelectVillage(id){
         let selectLength;// 选择'全部' selectLength 为5, 选择其他设置为6
@@ -470,10 +511,14 @@ export default {
           this.showtype = 1;
           var village = this.villageoptions.find(v=>v.id==id);
           this.cityname = village.name;
+          // 设置select选择单元的名字
+          this.orgList.splice(4, 2, this.cityname)
+          this.setOrgList(this.orgList)
+
           const httpresults = await this.$http.awaitTasks([
-            this.$http.get(`/dmp/api/Cell/QueryCell/${id}?time=${this.date}`),
-            this.$http.get(`/dmp/api/GetImage/GetVillage?id=${id}&time=${this.date}`),//1938 ${id}
-            this.$http.post(`/dmp/api/Cell/RoomCount`,{id:id,type:3,time:this.date})
+            this.$http.get(`/dmp/api/Cell/QueryCell/${id}?time=${this.params.querytime}`),
+            this.$http.get(`/dmp/api/GetImage/GetVillage?id=${id}&time=${this.params.querytime}`),//1938 ${id}
+            this.$http.post(`/dmp/api/Cell/RoomCount`,{id:id,type:3,time:this.params.querytime})
           ])
           const celloptions = httpresults[0];
           this.celloptions = [{id:0,address:'全部'}, ...celloptions];//单元选择赋值
@@ -497,6 +542,7 @@ export default {
           selectLength = 6
         }
         this.setOrg({num: this.celloptions.length - 1, selectLength})
+        this.setNodeData({id, type: 3}) // 五级架构：1。行政区：2。小区：3。单元：4 
     },
     async SelectCell(id){
       let selectLength;// 选择'全部' selectLength 设置为6, 选择其他设置为7
@@ -512,9 +558,13 @@ export default {
         this.$emit('nodechange',{id:id,type:4});//更新图表
         var cell = this.celloptions.find(v=>v.id==id);
         this.cityname = cell.address;
+        // 设置select选择单元名字
+        this.orgList.splice(5, 2, this.cityname)
+        this.setOrgList(this.orgList)
+
         this.showtype=2;
-        var getroomcount = this.$http.post(`/dmp/api/Cell/RoomCount`,{id:id,type:4,time:this.date});
-        const httpresult = await this.$http.get(`/dmp/api/GetImage/GetCuc?id=${id}&time=${this.date}`);//28147 ${id}
+        var getroomcount = this.$http.post(`/dmp/api/Cell/RoomCount`,{id:id,type:4,time:this.params.querytime});
+        const httpresult = await this.$http.get(`/dmp/api/GetImage/GetCuc?id=${id}&time=${this.params.querytime}`);//28147 ${id}
         this.imgurl = httpresult.pic || defaultImg;   // 父元素
         // this.setTabNum(0,httpresult.openCount);
         // this.setTabNum(1,httpresult.chargeCount);
@@ -524,8 +574,8 @@ export default {
         this.roomcount = await getroomcount;
         // this.deviceCount = httpresult.deviceCount;
         //this.celloptions = [{id:0,address:'全部'}, ...celloptions];//单元选择赋值
-
       }
+      this.setNodeData({id, type: 4}) // 五级架构：1。行政区：2。小区：3。单元：4 
     },
     wait (){
       return new Promise((reslove,reject)=>{
@@ -590,10 +640,29 @@ export default {
         eventtrigger(e,'mouseout');
       };
     },
-    async InitMap(cityname,datalist,node) {
+    async InitMap(cityname,datalist,node, selectedInfo) { // 城市名字, 子元素, 节点的信息, selectedInfo: {index: select 的索引, id: 选择的id, 0是全部}
+      // 存储区域的名字
+      if (this.isOrg) {
+        if (selectedInfo.index === null) {
+          this.setOrgList([])
+        } else {    
+          this.orgList.splice(selectedInfo.index)
+          if (selectedInfo.id !== 0) { this.orgList.push(cityname) }
+          this.setOrgList(this.orgList)
+        }   
+      } else if (this.isDistrict) {
+        if (selectedInfo.index === null) {
+          this.setDistrictList([])
+        } else {   
+          this.disList.splice(selectedInfo.index)        
+          if (selectedInfo.id !== 0) { this.disList.push(cityname) }
+          this.setDistrictList(this.disList)
+        }
+      }
+
       var type = 0;
       if(this.villageoptions) type=3;
-      else if(this.isActive) type=1;
+      else if(this.isOrg) type=1;
       else type=2;
       var cachepointdata={};
       var curshowid=0;
@@ -604,11 +673,11 @@ export default {
       }
 
       this.cityname = cityname;
-      if(this.isActive&&cityname==="中国") this.cityname = this.orgs.find(item=>item.parrentid==0).name;
+      if(this.isOrg&&cityname==="中国") this.cityname = this.orgs.find(item=>item.parrentid==0).name;
 
       var points = null;
-      if(!this.isActive||cityname==="中国"){//是否需要获取边界数据抠图
-        if(!this.isActive&&cityname!=="中国"){
+      if(this.isDistrict||cityname==="中国"){//是否需要获取边界数据抠图
+        if(this.isDistrict&&cityname!=="中国"){
           var nameall=null;
           for(var j=0;j<this.districtselescts.length;j++){
             var curname = this.districtselesctoptions[j].find(o=>o.id==this.districtselescts[j]).name;
@@ -834,7 +903,6 @@ export default {
               trigger :'item',
               // position: 'top',
               formatter:(params)=>{
-                // console.log(params);
                 var node = params.value[2];
                 if(node.deviceCount) return `<div class="tooltip-wrapper">${node.name}<br />房间数:${node.roomCount}<br />单元数:${node.cellCount}<br />设备数:${node.deviceCount}</div>`;
                 queryDeviceCount(node.id).then(deciveCount=>{
@@ -874,7 +942,7 @@ export default {
       });
       this.bMap = map;
 
-      if((!this.isActive||cityname==="中国")&&points){
+      if((this.isDistrict||cityname==="中国")&&points){
         this.curlay = new BMap.Polygon(points, {
           strokeColor: "none",
           fillColor: "rgba(0, 0, 0, 0.5)",
@@ -1029,8 +1097,12 @@ export default {
       this.$isdistrict = isdistrict;
     },
     ...mapMutations({
-      setOrg: 'SET_ORG',
-      setDistrict:'SET_DISTRICT'
+      setOrg: 'SET_ORG',                     // select 的长度和总数
+      setDistrict:'SET_DISTRICT',            // select 的长度和总数
+      setAddress: 'SET_ADDRESS',
+      setOrgList: 'SET_ORG_LIST',            // 区域文字描述
+      setDistrictList: 'SET_DISTRICT_LIST',  // 区域文字描述
+      setNodeData: 'SET_NODE_DATA'
     })
   },
 };
@@ -1049,8 +1121,10 @@ export default {
 
 .slide-leave-to {
   transform: translateY(-100%);
+}
 
-
+.locking {
+  margin-left: 0!important;
 }
 //   @keyframes enter 
 //     from 
@@ -1153,7 +1227,27 @@ export default {
     flex: 1;
     height: 742px;
     .select-wrapper {
+      position: relative;
+      top: -14px;
       margin: 6px 0;
+      .input-wrapper {
+        display: flex;
+        .el-input__inner {
+          padding-left: 30px!important;
+        }
+        .el-icon-search:before {
+          position: relative;
+          top: 10px;
+          left: 26px;
+          z-index: 9;
+        }
+        button {
+          background: $bg-active;
+          color: $color-normal;
+          border: none;
+          border-radius: none;
+        }
+      }
       .el-select {
         width: 137px;
         margin: 0 4px;
@@ -1177,7 +1271,7 @@ export default {
     }
     .body {
         width: 880px;
-        height: 750px;
+        height: 100%;
         //background: url('../assets/mapBg.png') no-repeat;  
         background-size: 100% 100%;
         position: relative;
@@ -1193,11 +1287,11 @@ export default {
         }
         #mappic {
             width: 880px;
-            height: 750px;  //完整地图的高度
+            height: 771px;  //完整地图的高度
             position: relative;
             background: url('../assets/mapBg.png') no-repeat; 
             background-size: 100% 100%;
-            top: -861px;
+            top: -875px;
         }
       .community {
         display: flex;

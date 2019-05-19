@@ -11,44 +11,66 @@ export default {
     cirqueInfo: {
       type: Object,
     },
-    isSecond: {
-      type: Boolean
-    }
+    value: {
+      type: Number
+    },
   },
   watch: {
-    isSecond() {
-      if (this.isSecond === true) {
+    value() {   //value: 0 全部 1: 已，2：未。
+      let value, percent, otherValue, otherPercent;  // value，percent: 圆环数据第一项。  otherValue, otherPercent：圆环数据第二项
+      if (this.value === 0) {
         this.list = [{
-          value: this.cirqueInfo.falseStatusNums,
-          percent: this.cirqueInfo.falseStatusNumsPercent,
-          itemStyle: {color: this.cirqueInfo.color}
-        }, {
-          value: this.cirqueInfo.trueStatusNums,
-          percent: this.cirqueInfo.trueStatusNumsPercent,
-          label: {show: false},
-          itemStyle: {color: '#2D6D90'}
-        }]
-      } else {
-        this.list = [{
-          value: 100,
+          value: 1,
           percent: '',
-          label: {show: false},
-          itemStyle: {color: '#2D6D90'}
+          itemStyle: { color: this.color }
+        }]
+      } else if (this.value === 1) { 
+        value = this.cirqueInfo.trueStatusNums
+        percent = this.cirqueInfo.trueStatusNumsPercent
+        otherValue = this.cirqueInfo.falseStatusNums
+        otherPercent = this.cirqueInfo.falseStatusNumsPercent
+      } else if (this.value === 2) {
+        value = this.cirqueInfo.falseStatusNums,
+        percent = this.cirqueInfo.falseStatusNumsPercent
+        otherValue = this.cirqueInfo.trueStatusNums
+        otherPercent = this.cirqueInfo.trueStatusNumsPercent
+      } 
+
+      // 设置最小圆环比例 1/10 
+      if (percent < '1%' && percent !== '0%') { value = 1, otherValue = 10 } 
+      if (otherPercent < '1%' && otherPercent !== '0%') { otherValue = 1, value = 10 } 
+
+      if (value === 0) { // 如果值为0, data数据一项。 如果不为0, data两项。 
+        this.list = [{
+          value: 1,
+          percent: '',
+          itemStyle: { color: this.color }
+        }]
+      } else if (value > 0) {
+        this.list = [{
+          value: value,
+          percent: percent,
+          itemStyle: { color: this.cirqueInfo.color }
+        }, {
+          value: otherValue,
+          percent: otherPercent,
+          label:{ show: false },
+          itemStyle: { color: this.color,  }
         }]
       }
 
       this.init()
-    },
+    }
   },
   data() {
     return {
       name: null,
       num: null,
-      list: [{                 // value 值表示圆环占的百分比面积
-        value: 100,
-        percent: '100%',
-        label: {show: false},
-        itemStyle: {color: '#2D6D90'}
+      color: '#2D6D90', // 圆环基色
+      list: [{
+        value: 1,
+        percent: '',
+        itemStyle: { color: '#2D6D90' }
       }]
     }
   },
@@ -79,6 +101,7 @@ export default {
           {
             type: "sunburst",
             radius: ['70%', '100%'],  // [内圆环半径, 外圆半径]
+            startAngle: 56.5,
             data: this.list,
             itemStyle: {borderWidth: 0},
             label: {

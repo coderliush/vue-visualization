@@ -5,16 +5,9 @@ import currency from 'currency.js'
 
 
 const objAddPercent = (obj) => {
-  let sum = Object.values(obj).reduce((total, current) => {
-    return total + current
-  })
   for (let k in obj) {
-    if (sum === 0) {
-      obj[k + 'Percent'] = '0%'
-    } else {
-      const percent = obj[k] * 100 / sum
+    const percent = obj[k] * 100 / obj.total
       obj[k + 'Percent'] = currency(percent, {precision: 2}).value + '%'
-    }
   }
   return obj
 }

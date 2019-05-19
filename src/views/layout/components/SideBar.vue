@@ -31,13 +31,15 @@
           code : 'dmp_01',
           children: [{
             id: 1, label: '1.1生命驾驶舱',code : 'dmp_01_01'
-          }, {
-            id: 2, label: '1.2实时告警',code : 'dmp_01_02'
-          }, {
-            id: 3, label: '1.3设备维修',code : 'dmp_01_03'
-          }, {
-            id: 4,label: '1.4设备运维（待）',code : 'dmp_01_03'
-          }]
+          }, 
+          // {
+          //   id: 2, label: '1.2实时告警',code : 'dmp_01_02'
+          // }, {
+          //   id: 3, label: '1.3设备维修',code : 'dmp_01_03'
+          // }, {
+          //   id: 4,label: '1.4设备运维（待）',code : 'dmp_01_03'
+          // }
+          ]
         },
         // {
         //   label: '2.0 网关生命周期管理',
@@ -106,7 +108,7 @@
     flex-direction column
     font-size $font-small
     .tree
-      // width 268px
+      width 268px
       margin-right 10px
       height 100%
       flex 1

@@ -17,9 +17,6 @@
   border 1px solid #3D8CB5!important
   padding 13px!important
 
-.input .el-input__inner
-  padding-left 30px!important
-
 .el-select-dropdown
   background #103045!important
   border none!important
@@ -102,6 +99,10 @@
   background #1B405B!important
 
 // ------------------------------------  日期  ---------------------------------------
+.el-picker-panel
+  background #085d8a
+  color #bceaff
+
 .el-picker-panel .el-input__inner, .el-date-editor .el-input__inner
   color #D2FFFF!important
   background #103045!important
@@ -124,6 +125,15 @@
 
 .el-input__prefix
   display none!important
+
+.el-picker-panel__icon-btn, .el-date-picker__header-label, .el-date-table th
+  color #bceaff
+
+.el-date-table td.today span, .el-date-table td span:hover
+  color #00fffb
+
+
+
 
 // ------------------------------------ 表格 --------------------------------------------------
 .el-table th
@@ -183,3 +193,6 @@
 
 .btn-next
   padding-left 6px!important
+
+.el-table__empty-text
+  color #a4d1dc !important

@@ -7,34 +7,25 @@
         ref="datePicker"
         class="picker"
         v-model="value"
-        type="datetime"
+        type="date"
         placeholder="检索时间（默认当下）"
-        default-time="12:00:00"
         @change="onChange"
         @focus="onFocus"
       >
       </el-date-picker>
       <span>本部设备异常汇总：</span>
-      <!-- <span class="active">{{nums.length !== 0 ? nums[0].falseStatusNums : null}}</span> -->
       <span>未安装</span>
-      <span class="active">{{nums.length !== 0 ? nums[1].falseStatusNums : null}}</span>
+      <span class="active">{{nums.length !== 0 ? nums[0].falseStatusNums : null}}</span>
       <span>未验收</span>
-      <span class="active">{{nums.length !== 0 ? nums[2].falseStatusNums : null}}</span>
-      <!-- <span>离线</span> -->
-      <!-- <span class="active">{{nums.length !== 0 ? nums[3].falseStatusNums : null}}</span> -->
+      <span class="active">{{nums.length !== 0 ? nums[1].falseStatusNums : null}}</span>
       <span>维修</span>
-      <span class="active">{{nums.length !== 0 ? nums[5].falseStatusNums : null}}</span>
-      <!-- <span>注销</span> -->
-      <!-- <span class="active">{{nums.length !== 0 ? nums[6].falseStatusNums : null}}</span> -->
+      <span class="active">{{nums.length !== 0 ? nums[2].trueStatusNums : null}}</span>
       <span>解绑</span>
-      <span class="active">解绑数目</span>
-      <!-- 【<span class="red-dot"></span>】
-      <span>生命过程录制</span> -->
+      <span class="active">{{nums.length !== 0 ? nums[3].trueStatusNums : null}}</span>
+
+      <span>锁总计</span>
+      <span class="active">{{total | splitNum}}</span>
     </div>
-    <!-- <div class="axis">
-      <img src="../../../assets/axis.png" alt="">
-      <div class="tag" ref="tag"><span></span></div>
-    </div> -->
   </div>
 </template>
 
@@ -45,6 +36,7 @@ export default {
   name: "",
   data() {
     return {
+      total: null,
       hideSideBar: false,
       value: '',
       hours: '',
@@ -56,20 +48,21 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'ratio'
+      'ratio',
+      'params'
     ])
   },
   methods: {
     onChange(e) {
-      let X
-      if (!this.hideSideBar) {
-        const hasSideX = 183, hasSideGap = 50.5
-        X = hasSideX + e.getHours() * hasSideGap
-      } else {
-        const noSideX = 250, noSideGap = 52
-        X = noSideX + e.getHours() * noSideGap
-      }
-      this.$refs.tag.style.left = `${X}px`,
+      // let X
+      // if (!this.hideSideBar) {
+      //   const hasSideX = 183, hasSideGap = 50.5
+      //   X = hasSideX + e.getHours() * hasSideGap
+      // } else {
+      //   const noSideX = 250, noSideGap = 52
+      //   X = noSideX + e.getHours() * noSideGap
+      // }
+      // this.$refs.tag.style.left = `${X}px`,
       this.setTime(e)
     },
     ...mapMutations({
@@ -83,15 +76,33 @@ export default {
         document.getElementsByClassName('el-picker-panel')[0].style.transformOrigin = '0 0'
         document.getElementsByClassName('el-picker-panel')[0].style.transform = `scale(${this.rap}) translateZ(0)`
       })
+    },
+    async getTotal() {  // 获取'锁总计'
+      this.total = await this.$http.post('/dmp/api/LockHistory/GetLockCountHistory', {
+        id: 0,
+        type: 0,
+        querytime: this.params.querytime,
+      })
+    },
+    async getNums() {
+      const params = {
+        id: 0,
+        type: 0,
+        querytime: this.params.querytime
+      }
+      this.nums = await this.$http.awaitTasks([
+        this.$http.post('/dmp/api/LockHistory/GetUnInstCntHistory', params), // 安装
+        this.$http.post('/dmp/api/LockHistory/GetUnAcpCntHistory', params),  // 验收
+        this.$http.post('/dmp/api/LockHistory/GetRepairCntHistory', params), // 维修
+        this.$http.post('/dmp/api/LockHistory/GetCancelCntHistory', params), // 解绑
+      ])  
     }
   },
-  mounted() {
+  async mounted() {
+    this.getNums()
+    this.getTotal()
     this.$bus.$on('close', () => {
       this.hideSideBar = !this.hideSideBar
-    })
-
-    this.$bus.$on('headerCount', (res) => {
-      this.nums = res
     })
   },
   components: {}

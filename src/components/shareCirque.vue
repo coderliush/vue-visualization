@@ -1,22 +1,5 @@
 <template>
   <div class="cirque-wrapper">
-    <div class="label">
-      <p class="register">未注册 {{cirqueData && cirqueData.unRegisters}}</p>
-      <p class="install">未安装 {{cirqueData &&  cirqueData.unInstalls}}</p>
-      <p class="check">未验收 {{cirqueData && cirqueData.unAccepts}}</p>
-      <p class="cancel">注销 {{cirqueData && cirqueData.cancels}}</p>
-      <p class="scrap">报废 {{cirqueData && cirqueData.dumpings}}</p>
-      <p class="service">维修 {{cirqueData && cirqueData.repairs}}</p>
-      <p class="offline">离线 {{cirqueData && cirqueData.offlines}}</p>
-
-      <canvas ref="register"></canvas>
-      <canvas ref="install"></canvas>
-      <canvas ref="check"></canvas>
-      <canvas ref="offline"></canvas>
-      <canvas ref="cancel" class="canvas-position"></canvas>
-      <canvas ref="scrap" class="canvas-position"></canvas>
-      <canvas ref="service" class="canvas-position"></canvas>
-    </div>
     <div ref="cirque" class="cirque"></div>
   </div>
 </template>
@@ -34,75 +17,76 @@ export default {
   },
   watch: {
     cirqueData() {
-      this.list = []
-      this.order.forEach((item, index) => {
-        for (let k in this.cirqueData) {
-          if (k === item) {
-            this.list.push({
-              name: '',
-              value: 1,
-              percentName: k,
-              percent: this.cirqueData[k],
-              itemStyle: {
-                color: this.color[index],
-                borderWidth: 0
-              }
-            })
+      for (let k in this.cirqueData) {
+        // 当总数为0时，设置总数为1.不然会导致0%占比50%
+        // if (this.cirqueData.total === 0) {this.cirqueData.total = 1}
+        if (k.indexOf('Percent') == '-1') {
+          // 如果占比为0， 显示的value 为0，另一块为总户数
+          // 如果占比小于1%，展示的value 为十分之一。
+          // 占比大于1%，正常展示。
+          if (this.cirqueData[k + 'Percent'] === '0%') {
+            this.cirqueData['show' + k] = 0
+            this.cirqueData['show' + k + 'other'] = this.cirqueData.total 
+          } else if (this.cirqueData[k + 'Percent'] < '1%' ) {
+            this.cirqueData['show' + k] = this.cirqueData.total * 0.1
+            this.cirqueData['show' + k + 'other'] = this.cirqueData.total * 0.9
+          } else {
+            this.cirqueData['show' + k] = this.cirqueData[k]
+            this.cirqueData['show' + k + 'other'] = this.cirqueData.total - this.cirqueData[k]
           }
-        }
-      })
-      this.init()
+
+          // 占比为0，selected 为true，label与圆环有个间隔，去掉这个间隔
+          if (this.cirqueData.unInstallsPercent === '0%') {this.cirqueData.select1 = false} else { this.cirqueData.select1 = true }
+          if (this.cirqueData.unAcceptsPercent === '0%') {this.cirqueData.select2 = false} else { this.cirqueData.select2 = true }
+          if (this.cirqueData.repairsPercent === '0%') {this.cirqueData.select3 = false} else { this.cirqueData.select3 = true }
+          if (this.cirqueData.cancelsPercent === '0%') {this.cirqueData.select4 = false} else { this.cirqueData.select4 = true }
+        } 
+      }
+      this.init(this.cirqueData)
     }
   },
   data() {
     return {
-      // 圆环图顺序: 未安装, 未验收, 注销, 报废, 维修, 离线, 未注册
-      count: [],
-      order: ['unInstallsPercent', 'unAcceptsPercent', 'cancelsPercent', 'dumpingsPercent', 'repairsPercent', 'offlinesPercent', 'unRegistersPercent'],
-      color: ['#7ABC12', '#1DA8FB', '#E7654B', '#979994', '#A26337', '#FDAE0B', '#FF67BB'], 
-      list: [{
-        name: '',
-        value: 1,
-        percent: '0%',
-      }, {
-        name: '',
-        value: 1,
-        percent: '0%'
-      }, {
-        name: '',
-        value: 1,
-        percent: '0%'
-      }, {
-        name: '',
-        value: 1,
-        percent: '0%'
-      }, {
-        name: '',
-        value: 1,
-        percent: '0%'
-      }, {
-        name: '',
-        value: 1,
-        percent: '0%'
-      }, {
-        name: '',
-        value: 1,
-        percent: '0%'
-      }]
+      select1: true,
+      select2: true,
+      select3: true,
+      select4: true,
+      color: {
+        normalColor: '#2C6D8E',
+        unInstall: '#1FADFF',
+        unAccept: '#E6644E',
+        repair: '#FDAE0B',
+        cancel: '#A36337'
+      }
     }
   },
   mounted() {
-    this.initLabel()
-    this.init()
+    // 初始化默认的数据
+    const data = {
+      showunInstalls: 1,
+      showunInstallsother: 1,
+      unAccepts: 1,
+      showunAcceptsother: 1,
+      showrepairs: 1,
+      showrepairsother: 1,
+      cancels: 1,
+      showcancelsother: 1,
+      unInstallsPercent: '50%',
+      unAcceptsPercent: '50%',
+      repairsPercent: '50%',
+      cancelsPercent: '50%',
+      select1: true,
+      select2: true,
+      select3: true,
+      select4: true,
+    }
+    this.init(data)
   },
   methods: {
-    init() {
+    init(obj) {
       const echarts = require("echarts")
       const chart = echarts.init(this.$refs.cirque)
       const option = {
-        title: {
-          text: ""
-        },
         graphic: {
           elements: [{
             type: 'text',
@@ -117,41 +101,151 @@ export default {
         },
         series: [
           {
-            type: "sunburst",
-            data: this.list,
-            label: {
-              position: "inside",
-              color: '#000',
-              fontSize: 13,
-              rotate: 'tangential',
-              formatter: (params) => {
-                return params.data.percent
+            name:'name',
+            type:'pie',
+            radius: ['40%', '60%'],
+            avoidLabelOverlap: false,
+            hoverAnimation: false,
+            labelLine: {
+              lineStyle: {
+                color: '#61A7C7'
               }
             },
-            itemStyle: {borderWidth: 0},
-            radius: ['45%', '67%'],
-            animation: false
+            label: {
+              formatter: function (params) {
+                return `{c|${params.data.name} ${params.data.percent}}\n{hr|}\n{d|${params.data.realNum}}`
+              },
+              rich: {
+                b: {
+                  color: '#61A7C7',
+                  align: 'center',
+                  padding: 4
+                },
+                hr: {
+                  borderColor: '#61A7C7',
+                  width: '100%',
+                  borderWidth: 1,
+                  height: 0
+                },
+                d: {
+                  color: '#61A7C7',
+                  align: 'center',
+                  padding: 4
+                },
+                c: {
+                  color: '#61A7C7',
+                  align: 'center',
+                  padding: 4
+                }
+              }
+            },
+            data:[
+              {
+                name: '未安装',
+                realNum: obj.unInstalls,           // 显示 label 真实数量 
+                percent: obj.unInstallsPercent,    // 显示 label 百分比 
+                value: obj.showunInstalls,         // echars 画图占比的依据
+                selected: obj.select1,                        // 是否选中: 数量为0， 不选中。
+                itemStyle: {
+                  normal: {
+                    color: this.color.unInstall
+                  }
+                },
+              },
+              {
+                value: obj.showunInstallsother, 
+                label: {show: false},
+                labelLine: {show: false,length: 0,length2: 0},
+                itemStyle: {
+                  normal: {
+                    color: this.color.normalColor
+                  }
+                },
+              },
+              {
+                name: '未验收',
+                realNum: obj.unAccepts,
+                percent: obj.unAcceptsPercent,
+                value: obj.showunAccepts,
+                selected: obj.select2,
+                itemStyle: {
+                  normal: {
+                    color: this.color.unAccept
+                  }
+                },
+                labelLine: {
+                  show: true,
+                  length: 0,
+                  length2: 0
+                }
+              },
+              {
+                value: obj.showunAcceptsother, 
+                label: {show: false},
+                labelLine: {show: false,length: 0,length2: 0},
+                itemStyle: {
+                  normal: {
+                    color: this.color.normalColor
+                  }
+                }
+              },
+              {
+                name: '智能维修',
+                realNum: obj.repairs,
+                percent: obj.repairsPercent,
+                value: obj.showrepairs,
+                selected: obj.select3,
+                itemStyle: {
+                  normal: {
+                    color: this.color.repair
+                  }
+                }
+              },
+              {
+                value: obj.showrepairsother, 
+                label: {show: false},
+                labelLine: {show: false,length: 0,length2: 0},
+                itemStyle: {
+                  normal: {
+                    color: this.color.normalColor
+                  }
+                }
+              },
+              {
+                name: '解绑',
+                realNum: obj.cancels,
+                percent: obj.cancelsPercent,
+                value: obj.showrepairs,
+                value: obj.showcancels,
+                selected: obj.select4,
+                itemStyle: {
+                  normal: {
+                    color: this.color.cancel
+                  }
+                },
+                labelLine: {
+                  show: true,
+                  length: 0,
+                  length2: 0
+                }
+              },
+              {
+                value: obj.showcancelsother, 
+                label: {show: false},
+                labelLine: {show: false,length: 0,length2: 0},
+                itemStyle: {
+                  normal: {
+                    color: this.color.normalColor
+                  }
+                }
+              },
+            ]
           }
-        ],
-      }
+        ]
+      };
+
       option.graphic.elements[0].style.text = this.graphic
       chart.setOption(option)
-    },
-    initLabel() {
-      let register = this.$refs.register.getContext("2d"),
-          install = this.$refs.install.getContext("2d"),
-          check = this.$refs.check.getContext("2d"), 
-          cancel = this.$refs.cancel.getContext("2d"),
-          scrap = this.$refs.cancel.getContext("2d"),
-          service = this.$refs.service.getContext("2d"),
-          offline = this.$refs.offline.getContext("2d")
-      register.beginPath(); register.moveTo(45,60); register.lineTo(100,60); register.lineTo(120,80); register.strokeStyle="#7CCCEF"; register.stroke()
-      offline.beginPath(); offline.moveTo(10,120); offline.lineTo(60,120); offline.lineTo(80,150); offline.strokeStyle="#7CCCEF"; offline.stroke()
-      install.beginPath(); install.moveTo(190,90); install.lineTo(210,60); install.lineTo(270,60); install.strokeStyle="#7CCCEF"; install.stroke()
-      check.beginPath(); check.moveTo(230,130); check.lineTo(250,115); check.lineTo(345,115); check.strokeStyle="#7CCCEF"; check.stroke()
-      cancel.beginPath(); cancel.moveTo(220,60); cancel.lineTo(230,75); cancel.lineTo(280,75); cancel.strokeStyle="#7CCCEF"; cancel.stroke()
-      scrap.beginPath(); scrap.moveTo(160,90); scrap.lineTo(170,115); scrap.lineTo(230,115); scrap.strokeStyle="#7CCCEF"; scrap.stroke()
-      service.beginPath(); service.moveTo(90,60); service.lineTo(70,80); service.lineTo(20,80); service.strokeStyle="#7CCCEF"; service.stroke()
     },
   },
   components: {}
@@ -163,39 +257,34 @@ export default {
   .label
     position relative
     font-size $font-smaller
-    p
+    div
       position absolute
+      p:nth-of-type(1)
+        margin-bottom 6px
     .register
-      top 40px
-      left 53px
+      top 122px
+      left -4px
     .install
-      top 40px
-      left 214px
+      top 42px
+      left 193px
     .check
       top 96px
       left 256px
-    .cancel
-      top 205px
+    .unAccept
+      top 207px
       left 245px
     .scrap
       top 245px
       left 190px
-    .service
-      top 210px
-      left 27px
+    .install
+      top 212px
+      left 4px
     .offline
       top 98px
       left 18px
-    canvas 
-      position absolute
-      left 0
-    .canvas-position
-      top 150px
   .cirque
     position relative
     top 30px
-    left 30px
-    width 200px
-    height 200px
-
+    width 350px
+    height 250px
 </style>

@@ -31,8 +31,8 @@ export default {
   .circle
     position relative
     img 
-      width 150px
-      padding-top 30px
+      width 60%
+      padding-top 70px
     .content
       position absolute
       top 60%

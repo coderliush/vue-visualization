@@ -39,4 +39,5 @@ export default {
   .lock 
     position relative 
     z-index 9
+    flex 1
 </style>
