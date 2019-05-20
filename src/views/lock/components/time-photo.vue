@@ -74,12 +74,12 @@ export default {
     }),
     onFocus() {
       // 日期选择版的放大比例
-      this.rap = this.ratio + 0.1
-      Vue.nextTick(()=>{
-        document.getElementsByClassName('el-picker-panel')[0].style.width = '1200px!imoportant'
-        document.getElementsByClassName('el-picker-panel')[0].style.transformOrigin = '0 0'
-        document.getElementsByClassName('el-picker-panel')[0].style.transform = `scale(${this.rap}) translateZ(0)`
-      })
+      // this.rap = this.ratio + 0.1
+      // Vue.nextTick(()=>{
+      //   document.getElementsByClassName('el-picker-panel')[0].style.width = '1200px!imoportant'
+      //   document.getElementsByClassName('el-picker-panel')[0].style.transformOrigin = '0 0'
+      //   document.getElementsByClassName('el-picker-panel')[0].style.transform = `scale(${this.rap}) translateZ(0)`
+      // })
     },
     async getTotal() {  // 获取'锁总计'
       this.total = await this.$http.post('/dmp/api/LockHistory/GetLockCountHistory', {

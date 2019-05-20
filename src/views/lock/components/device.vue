@@ -109,7 +109,7 @@ export default {
   },
   data() {
     return {
-      area: '区域',
+      area: null,
       total: null,
       showDeviceCircle: false,
       showHardVersionCircle: false,
@@ -173,12 +173,12 @@ export default {
       }
     },
     onDevice(val) {
-      if (val) { this.showDeviceCircle = true } else { this.showDeviceCircle = false }
-      this.showHardVersionCircle = false
+      if (val) { this.showDeviceCircle = true } else { this.showDeviceCircle = false } 
+      this.showHardVersionCircle = false // 设备属性更改，固体版本显示默认
       let selected = this.device.options.find(item => item.id === val)
       this.setDevice(selected)
 
-      this.hardVersion.value = ''
+      this.hardVersion.value = null
       this.setHardVersion(this.hardVersion.value)
     },
     onHardVersion(val) {
@@ -225,7 +225,7 @@ export default {
         margin 0 0 0 10px
         color $color-active
     .device-container
-      width 1610px
+      // width 1610px
       margin 0 auto
       padding 0 96px
       display flex

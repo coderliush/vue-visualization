@@ -1,5 +1,5 @@
 <template>
-  <div class="business" ref="business">
+  <div class="business" ref="transform">
     <div class="title">
       <span class="dot"></span>
       <span>区域检索</span>
@@ -166,6 +166,7 @@ export default {
 
       if(!this.config) await this.getconfig;
     },
+    // 获取组织架构总数
     totalNum(total) {
       this.boardList[0].num = total.provinceNums
       this.boardList[1].num = total.cityNums

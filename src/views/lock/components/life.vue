@@ -7,7 +7,7 @@
     <div class="des">
       <span class="active">{{querytime}}</span>
       <span class="active">【{{this.area}}】</span>
-      <span class="active">【{{this.device}}】</span>
+      <span class="active" v-show="this.device">【{{this.device}}】</span>
     </div>
 
     <div class="content"> 
@@ -76,8 +76,8 @@ export default {
   },
   data() {
     return {
-      area: '区域',
-      device: '设备属性',
+      area: null,
+      device: null,
       total: null,
       lifeList: [null, null, null, null],
       colors: ['#7CBE14', '#20A9F9', '#E6644E', '#FF66BC', '#A081FF', '#FFAE0D', '#999999', '#A56237'],
@@ -212,7 +212,7 @@ export default {
         color $color-active
     .content
       display flex
-      width 1610px
+      // width 1610px
       padding-left 200px
       margin 0 auto
       .item

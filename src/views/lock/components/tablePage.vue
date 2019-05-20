@@ -16,8 +16,8 @@
       <div class="des">
         <span class="active">{{querytime}}</span>
         <span class="active">【{{this.area}}】</span>
-        <span class="active">【{{this.device}}】</span>
-        <span class="active">【{{this.life}}】</span>
+        <span class="active" v-show="this.device">【{{this.device}}】</span>
+        <span class="active" v-show="this.life">【{{this.life}}】</span>
       </div>
 
       <div class="content">
@@ -97,9 +97,9 @@ export default {
   name: '',
   data() {
     return {
-      area: '区域',
-      device: '设备属性',
-      life: '生命状态', 
+      area: null,
+      device: null,
+      life: null, 
       downloadText: '报表导出',
       fileName: '',
       loading: true,

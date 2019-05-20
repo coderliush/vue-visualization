@@ -18,21 +18,21 @@ const mutations = {
   },
   [types.SET_DEVICE](state, obj) {  // 设备类型
     state.params.devicetype = obj.id
-    if (obj.name === '全部') {obj.name = '设备属性'}
-    state.text.deviceList.splice(0, 1, obj.name)
+    if (obj.name === '全部') { state.text.deviceList = [] } else { state.text.deviceList.splice(0, 1, obj.name) }
   },
   [types.SET_HARD_VERSION](state, val) { // 固体版本
     state.params.hardversion = val
-    if (val) {state.text.deviceList.splice(1, 1, val)} else {state.text.deviceList.splice(1, 1)}
+    if (!val) return
+    if (val === '全部') { state.text.deviceList.splice(1, 1) } else { state.text.deviceList.splice(1, 1, val) }
   },
   [types.SET_ADDRESS](state, address) {
     state.text.business.address = address
   },
   [types.SET_ORG_LIST](state, list) {
-    state.text.business.orgList = list.slice().length === 0 ? ['运营区域'] :  list.slice()  // 不修改 list, list.slice() 返回一个新数组
+    state.text.business.orgList = list.slice().length === 0 ? ['运营本部'] :  list.slice()  // 不修改 list, list.slice() 返回一个新数组
   },
   [types.SET_DISTRICT_LIST](state, list) {
-    state.text.business.districtList = list.slice().length === 0 ? ['行政区域'] : list.slice()
+    state.text.business.districtList = list.slice().length === 0 ? ['行政本部'] : list.slice()
   },
   [types.SET_ACTIVE](state, str) {
     state.text.business.active = str

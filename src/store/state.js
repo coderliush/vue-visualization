@@ -29,8 +29,8 @@ const state = {
       districtList: [],       // 选择的行政区区域
       address: ''             // 输入框的值
     }, 
-    deviceList: ['设备属性'],  // 选择的设备属性
-    lifeList: ['生命状态']     // 选择的生命状态
+    deviceList: [],  // 选择的设备属性
+    lifeList: []     // 选择的生命状态
   }
 }
 
