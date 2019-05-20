@@ -40,6 +40,18 @@ const mutations = {
   [types.SET_LIFE](state, list) {
     state.text.lifeList = list.slice()
   },
+  [types.SET_INSTALL](state, value) {
+    state.lifeParams.isInstall = value
+  },
+  [types.SET_ACCEPT](state, value) {
+    state.lifeParams.isAccept = value
+  },
+  [types.SET_REPAIR](state, value) {
+    state.lifeParams.isRepair = value
+  },
+  [types.SET_CANCEL](state, value) {
+    state.lifeParams.isCancel = value
+  },
 }
 
 export default mutations

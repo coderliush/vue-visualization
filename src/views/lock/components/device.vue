@@ -152,23 +152,24 @@ export default {
   methods: {
     async getData() {
       // 设备类型和固体版本两种数据。不显示圆环图，调获取下拉框的接口, 否则调获取圆环图数据的接口。
-      if (this.showDeviceCircle === false) {
-        const deviceOptions = await this.$http.get('/dmp/api/LockHistory/GetLockTypeHistory')
+      if (this.showDeviceCircle === false) { 
+        const deviceOptions = await this.$http.get('/dmp/api/LockHistory/GetLockTypeHistory') // 获取下拉框锁的类型
         this.device.num = deviceOptions.length
         this.device.options = [{name: '全部', id: 0}, ...deviceOptions]
-      } else {
-        const res = await this.$http.post('/dmp/api/LockHistory/CountLockUnWorksHistory', {...this.params, hardversion: ''}) 
+      } else { // 圆环图获取总数和每个部分的数据
+        const res = await this.$http.post('/dmp/api/LockHistory/CountLockUnWorksHistory', {...this.params, hardversion: null}) 
         const total = await this.$http.post('/dmp/api/LockHistory/GetLockCountHistory', {...this.params})
         this.deviceCirqueData = objAddPercent({...res, total})
       }
 
       if (this.showHardVersionCircle === false) {
-        const hardOptions = await this.$http.post('/dmp/api/LockHistory/GetLockHardversionHistory', {...this.params})
+        const hardOptions = await this.$http.post('/dmp/api/LockHistory/GetLockHardversionHistory', {...this.params}) // 获取下拉框固体版本的类型
         this.hardVersion.num = hardOptions.length
         this.hardVersion.options = ['全部', ...hardOptions]
       } else {
-        const res = await this.$http.post('/dmp/api/LockHistory/CountLockUnWorksHistory', this.params)  
-        this.HardVersionCirqueData = objAddPercent(res)
+        const res = await this.$http.post('/dmp/api/LockHistory/CountLockUnWorksHistory', this.params) 
+        const total = await this.$http.post('/dmp/api/LockHistory/GetLockCountHistory', {...this.params}) 
+        this.HardVersionCirqueData = objAddPercent({...res, total})
       }
     },
     onDevice(val) {

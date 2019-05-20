@@ -102,7 +102,7 @@ export default {
       life: '生命状态', 
       downloadText: '报表导出',
       fileName: '',
-      fullscreenLoading: false,
+      loading: true,
       showTable: false,
       currentPage: 1,
       tableData: [],
@@ -116,11 +116,18 @@ export default {
     ...mapGetters([
       'params',
       'querytime',
-      'text'
+      'text',
+      'lifeParams'
     ])
   },
   watch: {
     params: {
+      handler() {
+        this.showTable = false
+      },
+      deep: true
+    },
+    lifeParams: {
       handler() {
         this.showTable = false
       },
@@ -154,9 +161,16 @@ export default {
       this.downloadText = '报表导出中...'
 
       if (this.text.business.active === 'address') {
-        params = { address: this.area, time: this.params.querytime }
+        params = {
+          ...this.params, 
+          ...this.lifeParams,
+          type: 0, 
+          address: this.area,
+          time: this.params.querytime, 
+        }
+        delete params.querytime
       } else {
-        params = { id: this.params.id, type: this.params.type, time: this.params.querytime }
+        params = { time: this.params.querytime, ...this.params, ...this.lifeParams}
       }
 
       this.$http.download('/dmp/api/LockHistory/Export', params).catch(res => {
@@ -203,12 +217,13 @@ export default {
     },
     async searchTable() {
       const obj = {
-        id: this.params.id,
-        type: this.params.type,
         time: this.params.querytime,
         pageIndex: this.jumper || this.pageIndex,
         pageSize: this.pageSize,
+        ...this.params,
+        ...this.lifeParams
       }
+      delete obj.querytime
       if (this.text.business.active === 'address') { obj.address = this.area }
 
       const res = await this.$http.post('/dmp/api/LockHistory/GetLocksHistoryList', obj)

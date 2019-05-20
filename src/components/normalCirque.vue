@@ -16,7 +16,7 @@ export default {
     },
   },
   watch: {
-    value() {   //value: 0 全部 1: 已，2：未。
+    value() {   //value: 0 全部 1: 已安装，2：未安装。
       let value, percent, otherValue, otherPercent;  // value，percent: 圆环数据第一项。  otherValue, otherPercent：圆环数据第二项
       if (this.value === 0) {
         this.list = [{

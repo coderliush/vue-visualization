@@ -54,7 +54,7 @@ export default {
   },
   watch: {
     params: {
-      handler(obj) {
+      handler(newValue, oldValue) {
         this.init()
       },
       deep: true
@@ -110,7 +110,7 @@ export default {
   },
   methods: {
     async init() {
-      const total = await this.$http.post('/dmp/api/LockHistory/GetLockCntHistoryByDist', {...this.params, time: this.params.querytime}) // 总数
+      const total = await this.$http.post('/dmp/api/LockHistory/GetLockCntHistoryByLife', {...this.params}) // 总数
 
       const res = await this.$http.awaitTasks([
         this.$http.post('/dmp/api/LockHistory/GetUnInstCntHistory', this.params), // 安装
@@ -119,12 +119,17 @@ export default {
         this.$http.post('/dmp/api/LockHistory/GetCancelCntHistory', this.params), // 解绑
       ])  
 
+      // 应有总数 total，已安装 trueStatusNums, 未安装 = total - trueStatusNums
       res.forEach((item, index) => {
         this.list[index].selected.num = total
         this.list[index].options[0].num = total
         this.list[index].options[1].num = item.trueStatusNums
-        this.list[index].options[2].num = item.falseStatusNums
-        this.list[index].cirqueInfo = {color: this.colors[index], ...objAddPercent(item)}
+        this.list[index].options[2].num = total - item.trueStatusNums
+        this.list[index].cirqueInfo = {color: this.colors[index], ...objAddPercent({
+          trueStatusNums: item.trueStatusNums,
+          falseStatusNums: total - item.trueStatusNums,
+          total
+        })}
       })
     },
     onSelect(item, index) {
@@ -133,7 +138,21 @@ export default {
       item.selected.num = item.options[item.value].num
 
       this.lifeList.splice(index, 1, item.selected.label)
-      this.setLife(this.lifeList)
+      this.setLife(this.lifeList)  // 报表显示状态文本
+      // 设置生命状态的参数
+      switch(index) {
+        case 0:
+          this.setInstall(item.value)
+          break
+        case 1: 
+          this.setAccept(item.value)
+          break
+        case 2: 
+          this.setRepair(item.value)
+          break
+        case 3: 
+          this.setCancel(item.value)
+      }
     },
     initCavas() {
       let label
@@ -143,6 +162,10 @@ export default {
       }
     },
     ...mapMutations({
+      setInstall: 'SET_INSTALL',
+      setAccept: 'SET_ACCEPT',
+      setRepair: 'SET_REPAIR',
+      setCancel: 'SET_CANCEL',
       setLife: 'SET_LIFE'
     }) 
   },

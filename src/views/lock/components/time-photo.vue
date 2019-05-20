@@ -30,6 +30,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+import moment from "moment"
 import Vue from 'vue'
 import {mapGetters ,mapMutations} from 'vuex'
 export default {
@@ -63,7 +64,10 @@ export default {
       //   X = noSideX + e.getHours() * noSideGap
       // }
       // this.$refs.tag.style.left = `${X}px`,
-      this.setTime(e)
+      let time = moment(e).add(1,'d').startOf('day')._d
+      this.setTime(time)
+      this.getNums()
+      this.getTotal()
     },
     ...mapMutations({
       setTime: 'SET_TIME'

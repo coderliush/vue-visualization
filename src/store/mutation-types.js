@@ -21,3 +21,11 @@ export const SET_ACTIVE = 'SET_ACTIVE'
 export const SET_LIFE = 'SET_LIFE'
 
 export const SET_ADDRESS = 'SET_ADDRESS'
+
+export const SET_INSTALL = 'SET_INSTALL'
+
+export const SET_ACCEPT = 'SET_ACCEPT'
+
+export const SET_REPAIR = 'SET_REPAIR'
+
+export const SET_CANCEL = 'SET_CANCEL'

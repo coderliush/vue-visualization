@@ -63,7 +63,7 @@
             <p style="max-width: 334px; margin: 0 auto;position: relative; top: -8px;">{{cityname}}</p>
           </div>
         </div>
-        <div class="body" id="bodymap">
+        <div class="body" id="bodymap" ref="transformMap">
           <div id="map" v-show="!showtype"></div>
           <div id="mappic" v-show="!showtype"></div>
           <villdgeUnit :type="showtype" :vname="vname" :src="imgurl" v-show="showtype"></villdgeUnit>
@@ -196,6 +196,13 @@ export default {
     };
   },
   async mounted() {
+    // 地图添加缩放
+    this.setRap()
+    window.onresize = ()=> {
+      this.setRap()
+    }
+
+
     const getdistrict = this.$http.get(`/dmp/api/Map/Query?time=${this.params.querytime}`);
     const getorg = this.$http.get(`/dmp/api/Org/Query?time=${this.params.querytime}`);
     this.districts = await getdistrict;
@@ -221,8 +228,15 @@ export default {
     // setTimeout(() => this.init(), 300);
   },
   methods: {
+    setRap(){
+      var transformMap = this.$refs.transformMap;
+      var rap = document.body.clientWidth / 1903 || 1
+      transformMap.style.transformOrigin = '0 0'
+      transformMap.style.transform =  `scale(${rap}) translateZ(0)`
+    },
     onLocking() {
       this.locking = false
+      this.disabledInput = false
     },
     searchAddress() {
       this.disabledInput = true
@@ -1125,6 +1139,7 @@ export default {
 
 .locking {
   margin-left: 0!important;
+  color: #fff!important;
 }
 //   @keyframes enter 
 //     from 

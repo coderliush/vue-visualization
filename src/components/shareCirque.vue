@@ -47,6 +47,7 @@ export default {
   },
   data() {
     return {
+      colorActive: '#B3E1F4', // 文字亮色
       select1: true,
       select2: true,
       select3: true,
@@ -63,18 +64,19 @@ export default {
   mounted() {
     // 初始化默认的数据
     const data = {
-      showunInstalls: 1,
-      showunInstallsother: 1,
-      unAccepts: 1,
-      showunAcceptsother: 1,
-      showrepairs: 1,
-      showrepairsother: 1,
-      cancels: 1,
-      showcancelsother: 1,
-      unInstallsPercent: '50%',
-      unAcceptsPercent: '50%',
-      repairsPercent: '50%',
-      cancelsPercent: '50%',
+      realNum: null,
+      showunInstalls: 3,
+      showunInstallsother: 7,
+      showunAccepts: 3,
+      showunAcceptsother: 7,
+      showrepairs: 3,
+      showrepairsother: 7,
+      showcancels: 3,
+      showcancelsother: 7,
+      unInstallsPercent: '30%',
+      unAcceptsPercent: '70%',
+      repairsPercent: '30%',
+      cancelsPercent: '70%',
       select1: true,
       select2: true,
       select3: true,
@@ -92,6 +94,8 @@ export default {
             type: 'text',
             style: {
               text: '',
+              stroke: '#B3E1F4',
+              fontSize: 18,
               fill: '#67B2DA',
               font: 'bold 14px "Microsoft YaHei", sans-serif',
             },
@@ -106,6 +110,10 @@ export default {
             radius: ['40%', '60%'],
             avoidLabelOverlap: false,
             hoverAnimation: false,
+            itemStyle: {
+              borderWidth: 1,
+              borderColor: '#103045'
+            },
             labelLine: {
               lineStyle: {
                 color: '#61A7C7'
@@ -117,23 +125,26 @@ export default {
               },
               rich: {
                 b: {
-                  color: '#61A7C7',
+                  fontSize: 14,
+                  color: '#C5F6FF',
                   align: 'center',
                   padding: 4
                 },
                 hr: {
-                  borderColor: '#61A7C7',
+                  borderColor: '#33637D',
                   width: '100%',
                   borderWidth: 1,
                   height: 0
                 },
                 d: {
-                  color: '#61A7C7',
+                  fontSize: 14,
+                  color: '#C5F6FF',
                   align: 'center',
                   padding: 4
                 },
                 c: {
-                  color: '#61A7C7',
+                  fontSize: 14,
+                  color: '#C5F6FF',
                   align: 'center',
                   padding: 4
                 }
@@ -158,7 +169,7 @@ export default {
                 labelLine: {show: false,length: 0,length2: 0},
                 itemStyle: {
                   normal: {
-                    color: this.color.normalColor
+                    color: this.color.normalColor,
                   }
                 },
               },
@@ -215,7 +226,6 @@ export default {
                 name: '解绑',
                 realNum: obj.cancels,
                 percent: obj.cancelsPercent,
-                value: obj.showrepairs,
                 value: obj.showcancels,
                 selected: obj.select4,
                 itemStyle: {

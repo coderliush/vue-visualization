@@ -281,7 +281,7 @@ export default {
       display flex
       min-height 892px
       .group
-        width 336px
+        width 236px
         padding 20px 0
         .item
           width 100%
