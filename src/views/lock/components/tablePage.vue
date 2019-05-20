@@ -23,11 +23,11 @@
       <div class="content">
         <template>
           <el-table :data="tableData" style="width: 100%" class="table">
-            <el-table-column prop="address" label="详细地址（单元门 / 房间门）" width="240" align="center"></el-table-column>
+            <el-table-column prop="address" label="详细地址（单元门 / 房间门）" width="210" align="center"></el-table-column>
             <el-table-column prop="lockType" label="锁类型" align="center"></el-table-column>
             <el-table-column prop="lockvendor" label="供应商" align="center"></el-table-column>
             <el-table-column prop="batch" label="批次号" align="center"></el-table-column>
-            <el-table-column prop="macId" label="macID" align="center"></el-table-column>
+            <el-table-column prop="macId" label="macID" align="center" width="110"></el-table-column>
             <el-table-column prop="hardVersion" label="固体版本" align="center"></el-table-column>
             <el-table-column label="安装" align="center" width="180">
               <template slot-scope="scope">
@@ -43,7 +43,7 @@
                 <p>{{scope.row.acceptPerName}}</p>
               </template>
             </el-table-column>
-            <el-table-column label="智控维修" align="center" width="180">
+            <el-table-column label="智控维修" align="center">
               <template slot-scope="scope">
                 <p v-if="scope.row.repair === '无维修'">无维修</p>
                 <div v-else class="detail" @click="detail(scope.row)">
@@ -262,7 +262,7 @@ export default {
       cursor pointer
 
   .table-page
-    width 100%
+    width 1148px
     position relative
     z-index 1
     margin-top 10px
@@ -297,6 +297,8 @@ export default {
     .content
       width 100%
       .table
+        width 1148px!important
+        font-size $font-smaller
         margin-bottom 20px
         text-align center
         .detail

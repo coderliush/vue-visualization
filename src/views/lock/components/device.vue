@@ -227,13 +227,13 @@ export default {
     .device-container
       // width 1610px
       margin 0 auto
-      padding 0 96px
+      padding 0 28px
       display flex
       .item 
         width 25%
         text-align center
         .select
-          width 140px!important
+          width 110px!important
           position relative 
           z-index 9
         .graph
@@ -244,7 +244,7 @@ export default {
           .device-no-selected
             margin-top 20px
             img
-              width 158px
+              width 120px
             .content
               position relative
               top -70px
@@ -254,6 +254,7 @@ export default {
             height 300px
           p
             position relative
-            top -6px
+            top 17px
+            font-size $font-smaller
 
 </style>

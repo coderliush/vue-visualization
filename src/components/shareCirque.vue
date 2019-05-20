@@ -95,7 +95,7 @@ export default {
             style: {
               text: '',
               stroke: '#B3E1F4',
-              fontSize: 18,
+              // fontSize: 14,
               fill: '#67B2DA',
               font: 'bold 14px "Microsoft YaHei", sans-serif',
             },
@@ -107,7 +107,7 @@ export default {
           {
             name:'name',
             type:'pie',
-            radius: ['40%', '60%'],
+            radius: ['30%', '45%'],
             avoidLabelOverlap: false,
             hoverAnimation: false,
             itemStyle: {
@@ -125,7 +125,7 @@ export default {
               },
               rich: {
                 b: {
-                  fontSize: 14,
+                  fontSize: 12,
                   color: '#C5F6FF',
                   align: 'center',
                   padding: 4
@@ -137,13 +137,13 @@ export default {
                   height: 0
                 },
                 d: {
-                  fontSize: 14,
+                  fontSize: 12,
                   color: '#C5F6FF',
                   align: 'center',
                   padding: 4
                 },
                 c: {
-                  fontSize: 14,
+                  fontSize: 12,
                   color: '#C5F6FF',
                   align: 'center',
                   padding: 4
@@ -295,6 +295,6 @@ export default {
   .cirque
     position relative
     top 30px
-    width 350px
+    width 250px
     height 250px
 </style>

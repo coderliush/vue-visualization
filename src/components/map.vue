@@ -1238,6 +1238,7 @@ export default {
     height 744px;
   }
   .container {
+    width: 626px;   // 设置宽度，去掉横向滚动条。
     position: relative;
     flex: 1;
     height: 742px;

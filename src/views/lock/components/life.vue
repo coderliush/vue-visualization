@@ -213,10 +213,11 @@ export default {
     .content
       display flex
       // width 1610px
-      padding-left 200px
+      padding-left 110px
       margin 0 auto
       .item
         flex 1
+        margin-right 70px
         span
           font-size $font-small
           position relative
@@ -228,10 +229,10 @@ export default {
           margin 20px 0
           .right
             img 
-              width 316px
+              width 250px
               position absolute
-              top 50%
-              transform translateX(-57px) translateY(-52%)
+              top 60px
+              transform translateX(-46px) translateY(-52%)
           .cirque
             position relative
             z-index 9999
@@ -239,22 +240,22 @@ export default {
             position absolute
             p
               position absolute
-              left 131px
-              top -168px
+              left 109px
+              top -140px
               white-space nowrap
               padding-bottom 6px
               font-size $font-smaller
               border-bottom 1px solid #7CCCEF
             canvas
               position absolute
-              top -178px
-              left 26px
+              top -151px
+              left 4px
           .info
             min-width 154px
             position absolute
-            top 50%
+            top 40%
             text-align center
-            transform translateY(-12px)
+            transform translateX(-15px)
             p:nth-of-type(1)
               margin-bottom 4px
               font-size $font-small
@@ -262,7 +263,7 @@ export default {
               font-size $font-small
               color $color-active
         .select
-          width 140px
+          width 110px
       .item:last-of-type
         margin-right 0
         .connect

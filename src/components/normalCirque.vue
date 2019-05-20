@@ -128,7 +128,7 @@ export default {
 <style scoped lang="stylus">
   @import '~styles/variable'
   .cirque
-    width 150px
-    height 150px
+    width 120px
+    height 120px
 
 </style>
