@@ -107,7 +107,7 @@ export default {
           {
             name:'name',
             type:'pie',
-            radius: ['30%', '45%'],
+            radius: ['40%', '55%'],
             avoidLabelOverlap: false,
             hoverAnimation: false,
             itemStyle: {
@@ -296,5 +296,5 @@ export default {
     position relative
     top 30px
     width 250px
-    height 250px
+    height 200px
 </style>

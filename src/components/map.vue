@@ -54,13 +54,13 @@
           <div class="input-wrapper" v-show="isAddress">
             <i class="el-icon-search"></i>
             <el-input v-model="inputValue" class="input" type="text" placeholder="请输入单元地址" :disabled="disabledInput"></el-input>
-            <el-button @click="searchAddress" v-show="!locking">搜索</el-button>
-            <el-button class="locking" @click="onLocking" v-show="locking">锁定</el-button>
+            <el-button class="button" @click="searchAddress" v-show="!locking">搜索</el-button>
+            <el-button class="locking button" @click="onLocking" v-show="locking">锁定</el-button>
           </div>
         </div>
         <div class="header-wrapper"> 
           <div class="header">
-            <p style="max-width: 334px; margin: 0 auto;position: relative; top: -8px;">{{cityname}}</p>
+            <p style="max-width: 235px; margin: 0 auto;position: relative; top: -17px;">{{cityname}}</p>
           </div>
         </div>
         <div class="body" id="bodymap" ref="transformMap">
@@ -1241,11 +1241,13 @@ export default {
     width: 626px;   // 设置宽度，去掉横向滚动条。
     position: relative;
     flex: 1;
-    height: 742px;
+    height: 645px;
     .select-wrapper {
       position: relative;
       top: -14px;
+      left: -240px;
       margin: 6px 0;
+      white-space: nowrap;
       .input-wrapper {
         display: flex;
         .el-input__inner {
@@ -1265,8 +1267,8 @@ export default {
         }
       }
       .el-select {
-        width: 137px;
-        margin: 0 4px;
+        width: 172px;
+        margin-right: 10px;
       }
       .el-select:nth-of-type(1) {
         margin-left: 0;
@@ -1319,7 +1321,7 @@ export default {
     .count {
       position: absolute;
       z-index: 999;
-      bottom: 42px;
+      bottom: 144px;
       left: 52px;
       height: 0;
       p {
@@ -1370,6 +1372,17 @@ export default {
     width: 100%;
     height: 14px;
     // background: #050A27;
+  }
+  .select2 {
+    position relative
+    left 240px
+  }
+  .input-wrapper {
+    position relative
+    left 226px
+  }
+  .button {
+    padding: 10px 20px;  
   }
 }
 </style>

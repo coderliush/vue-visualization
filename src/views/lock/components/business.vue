@@ -280,10 +280,9 @@ export default {
           background-size 100% 100%
     .map-wrapper
       display flex
-      min-height 892px
+      // min-height 892px
       .group
         width 260px
-        padding 20px 0
         .item
           width 100%
           padding 4px 10px

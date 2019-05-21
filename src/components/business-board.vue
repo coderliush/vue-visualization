@@ -31,21 +31,22 @@ export default {
   .circle
     position relative
     img 
-      width 60%
-      padding-top 70px
+      width 133px
+      padding-top 58px
     .content
       position absolute
       top 60%
       left 50%
       .active
         position absolute
-        top -18px
+        top -13px
         color $color-active
-        font-size 26px
+        font-size 22px
         transform translateX(-50%)
       .name 
         position absolute
-        top 21px
+        top 16px
+        font-size $font-small
         word-break keep-all
         transform translateX(-50%)
 </style>

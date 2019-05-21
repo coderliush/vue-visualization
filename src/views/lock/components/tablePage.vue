@@ -253,9 +253,9 @@ export default {
     span
       display inline-block
       width 200px
-      height 50px
-      line-height 50px
-      font-size 20px
+      height 40px
+      line-height 40px
+      font-size 18px
       border-radius 8px
       border 1px solid #00BDFB 
       background #00aef5 
